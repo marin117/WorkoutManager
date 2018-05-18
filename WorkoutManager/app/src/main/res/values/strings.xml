@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">WorkoutManager</string>
+    <string name="action_settings">Settings</string>
+    <string name="routine_id">routine_id</string>
+    <string name="exercise_name">exercise_name</string>
+    <string name="owner">owner</string>
+    <string name="detail_name">%s</string>
+    <string name="detail_owner">Creator: %s</string>
+    <string name="sets">Sets: </string>
+    <string name="reps">Reps: </string>
+    <string name="workotu_name_edit">Enter workout name</string>
+
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_margin="15dp"
+    android:background="@color/workoutListColor">
+
+    <TextView
+        android:id="@+id/workout_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textSize="15dp"
+        android:text = "user"
+        android:layout_below="@+id/workout_name" />
+
+    <TextView
+        android:id="@+id/owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="15dp"
+        android:text = "user"
+        android:layout_below="@+id/workout_name" />
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textSize="10dp"
+        android:layout_below="@+id/user"
+        android:layout_marginTop="10dp"
+        android:text = "dlgksgj"
+        />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:layout_below="@+id/user"
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:text ="test"/>
+
+    <TextView
+        android:id="@+id/stars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:layout_below="@+id/user"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:text ="test"/>
+
+</RelativeLayout>
