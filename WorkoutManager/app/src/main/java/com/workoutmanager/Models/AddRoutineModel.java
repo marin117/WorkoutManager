@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
+import static com.workoutmanager.Utils.Time.getCurrentTime;
+
 public class AddRoutineModel {
 
 
@@ -18,17 +20,17 @@ public class AddRoutineModel {
 
     @SerializedName("date")
     @Expose
-    private Date date;
+    private String date;
 
     public AddRoutineModel(){
         this.routine = new Routine();
-        this.date = new Date();
+        this.date = getCurrentTime();
         this.location = "";
     }
 
     public AddRoutineModel(Routine routine){
         this.routine = routine;
-        this.date = new Date();
+        this.date = getCurrentTime();
         this.location = "";
     }
 
@@ -44,7 +46,7 @@ public class AddRoutineModel {
         return location;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -52,7 +54,7 @@ public class AddRoutineModel {
         this.location = location;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

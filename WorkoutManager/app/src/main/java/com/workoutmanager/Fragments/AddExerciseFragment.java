@@ -2,6 +2,7 @@ package com.workoutmanager.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.workoutmanager.Activity.MainActivity;
 import com.workoutmanager.Adapters.AddExerciseAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.AddRoutineModel;
@@ -33,8 +35,11 @@ import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
 import com.workoutmanager.ViewModel.AddExerciseViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -113,6 +118,7 @@ public class AddExerciseFragment extends Fragment {
                         RetrofitClient retrofit = new RetrofitClient();
                         Call<String> call = retrofit.createClient().sendRoutine(routineModel);
 
+
                         call.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
@@ -128,6 +134,8 @@ public class AddExerciseFragment extends Fragment {
 
                     }
                 });
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

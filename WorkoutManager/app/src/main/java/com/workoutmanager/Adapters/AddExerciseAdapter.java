@@ -20,11 +20,12 @@ import com.workoutmanager.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.ExerciseHolder>{
+public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.ExerciseHolder> {
 
     private List<String> exercises;
     private Context context;
     private ArrayList<Exercise> items;
+
 
     public class ExerciseHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -62,7 +63,6 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (s.toString().isEmpty()) {
                         sets.getText().clear();
-                        reps.getText().clear();
                         items.get(getAdapterPosition()).setSets(0);
                     }
 
@@ -70,11 +70,35 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
 
                 }
 
+
                 @Override
                 public void afterTextChanged(Editable s) {
 
                 }
             });
+
+            reps.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.toString().isEmpty()) {
+                        reps.getText().clear();
+                        items.get(getAdapterPosition()).setReps(0);
+                    }
+
+                    else items.get(getAdapterPosition()).setReps(Integer.valueOf(s.toString()));
+
+                }
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+
 
             if(items.size() == 3) delete.setVisibility(View.INVISIBLE);
             else delete.setVisibility(View.VISIBLE);
@@ -120,4 +144,6 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
     public int getItemCount() {
         return items.size();
     }
+
+
 }

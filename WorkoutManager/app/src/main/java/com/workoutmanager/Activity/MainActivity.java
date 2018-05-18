@@ -3,6 +3,7 @@ package com.workoutmanager.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +41,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-
-
-
+        swipeRefresh = findViewById(R.id.swipe_main);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -52,26 +51,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        RetrofitClient retrofit = new RetrofitClient();
-        Call<List<Workout>> call = retrofit.createClient().workoutList();
+        getData();
 
-        call.enqueue(new Callback<List<Workout>>() {
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
-
-                mAdapter = new WorkoutAdapter(response.body());
-                mRecyclerView.setAdapter(mAdapter);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Workout>> call, Throwable t) {
-                Log.e("TAG", t.getMessage());
-                //Toast.makeText(getApplicationContext(), "Failure",
-                 //       Toast.LENGTH_SHORT).show();
-
+            public void onRefresh() {
+                getData();
             }
         });
+
+
+
+
     }
 
 
@@ -95,5 +86,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void getData(){
+        RetrofitClient retrofit = new RetrofitClient();
+        Call<List<Workout>> call = retrofit.createClient().workoutList();
+
+        call.enqueue(new Callback<List<Workout>>() {
+            @Override
+            public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
+
+                mAdapter = new WorkoutAdapter(response.body());
+                mRecyclerView.setAdapter(mAdapter);
+                if (swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Workout>> call, Throwable t) {
+                Log.e("TAG", t.getMessage());
+                //Toast.makeText(getApplicationContext(), "Failure",
+                //       Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 }
