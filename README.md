@@ -1,6 +1,6 @@
 # WorkoutManager
 
-Application for logging exercise workout routines and sharing it with other people.
+Application for logging workout routines and sharing it with others.
 
 ## Dependencies
 
