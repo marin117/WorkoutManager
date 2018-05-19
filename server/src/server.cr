@@ -9,7 +9,7 @@ get "/" do |e|
   a = ""
   query = db.query "select array_to_json(array_agg(row_to_json(t))) from (select routine_id, r.name, username, owner, location, date, r.appraisal from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
-join person on person.id = workout.user_id) t;" do |rs|
+join person on person.id = workout.user_id order by date desc) t;" do |rs|
     rs.each do
       a = rs.read(JSON::Any)
     end

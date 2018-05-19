@@ -1,7 +1,8 @@
 package com.workoutmanager.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,15 +11,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.workoutmanager.Activity.ExerciseListActivity;
+import com.workoutmanager.Fragments.RoutineDetailFragment;
 import com.workoutmanager.R;
 import com.workoutmanager.Models.Workout;
+import com.workoutmanager.ViewModel.MainViewModel;
 
 import java.util.List;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutHolder> {
 
     private List<Workout> workoutList;
+    private MainViewModel mainViewModel;
 
     public class WorkoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
@@ -44,17 +47,19 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
                     Toast.LENGTH_LONG).show();
 
             Workout workout = workoutList.get(getAdapterPosition());
+            mainViewModel.setRoutineID(workout);
 
-            Intent intent = new Intent(context, ExerciseListActivity.class);
-            intent.putExtra(context.getString(R.string.routine_id), workout.getRoutineId());
-            intent.putExtra(context.getString(R.string.owner), workout.getOwner());
-            intent.putExtra(context.getString(R.string.exercise_name),workout.getName());
-            context.startActivity(intent);
+
+            FragmentTransaction fragmentTransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.main_fragment ,new RoutineDetailFragment()).addToBackStack(null);
+            fragmentTransaction.commit();
+
         }
     }
 
-    public WorkoutAdapter(List<Workout> workoutList){
+    public WorkoutAdapter(List<Workout> workoutList, MainViewModel mainViewModel){
         this.workoutList = workoutList;
+        this.mainViewModel = mainViewModel;
     }
 
     @Override

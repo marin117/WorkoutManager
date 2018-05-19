@@ -27,12 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddTypeFragment extends Fragment {
-
-
      private RecyclerView mRecyclerView;
      private RecyclerView.Adapter mAdapter;
      private RecyclerView.LayoutManager mLayoutManager;
-     private int i;
      private ArrayList<String> items;
      private AddExerciseViewModel mViewModel;
      private Routine routine;

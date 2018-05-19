@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.workoutmanager.Adapters.WorkoutAdapter;
+import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
@@ -26,10 +27,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +35,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        swipeRefresh = findViewById(R.id.swipe_main);
+
+        MainFragment mainFragment = new MainFragment();
+        getSupportFragmentManager().beginTransaction().
+                add(R.id.main_fragment, mainFragment).commit();
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -50,17 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddWorkoutActivity.class));
             }
         });
-
-        getData();
-
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getData();
-            }
-        });
-
-
 
 
     }
@@ -86,29 +73,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void getData(){
-        RetrofitClient retrofit = new RetrofitClient();
-        Call<List<Workout>> call = retrofit.createClient().workoutList();
-
-        call.enqueue(new Callback<List<Workout>>() {
-            @Override
-            public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
-
-                mAdapter = new WorkoutAdapter(response.body());
-                mRecyclerView.setAdapter(mAdapter);
-                if (swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(false);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Workout>> call, Throwable t) {
-                Log.e("TAG", t.getMessage());
-                //Toast.makeText(getApplicationContext(), "Failure",
-                //       Toast.LENGTH_SHORT).show();
-
-            }
-        });
     }
 }
