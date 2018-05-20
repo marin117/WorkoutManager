@@ -2,8 +2,15 @@ package com.workoutmanager.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.workoutmanager.Adapters.WorkoutAdapter;
+import com.workoutmanager.Fragments.AddTypeFragment;
 import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
@@ -28,13 +36,22 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
 
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mDrawerLayout = findViewById(R.id.draw_layout);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_compass);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+
 
         MainFragment mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction().
@@ -49,29 +66,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        selectDrawerContent(navigationView);
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    private void selectDrawerContent(NavigationView navigationView){
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        selectDrawerItem(item);
+                        return true;
+                    }
+                }
+        );
+    }
+
+    private void selectDrawerItem(MenuItem item){
+        Fragment fragment = null;
+        Class fragmentClass;
+
+        switch (item.getItemId()){
+
+            case R.id.home:
+                fragmentClass = MainFragment.class;
+                break;
+            case R.id.personal_workouts:
+                fragmentClass = AddTypeFragment.class;
+                break;
+
+            default:
+                fragmentClass = MainFragment.class;
+                break;
+        }
+
+        try{
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        getSupportFragmentManager().beginTransaction().
+                replace(R.id.main_fragment, fragment).addToBackStack(null).commit();
+
+        item.setChecked(true);
+        mDrawerLayout.closeDrawers();
+    }
+
 }
