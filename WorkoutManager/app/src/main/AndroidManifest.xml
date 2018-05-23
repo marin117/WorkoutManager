@@ -21,9 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.AddWorkoutActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
+        <activity
+            android:name=".Activity.AddWorkoutActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
+        <activity android:name=".Activity.LoginActivity"></activity>
     </application>
 
 </manifest>

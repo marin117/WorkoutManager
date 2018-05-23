@@ -9,5 +9,10 @@
             android:id="@+id/personal_workouts"
             android:title="My workouts" />
 
+        <item
+            android:id ="@+id/login"
+            android:title="Login"
+            />
+
     </group>
 </menu>

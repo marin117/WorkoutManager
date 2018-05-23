@@ -105,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = AddTypeFragment.class;
                 break;
 
+            case R.id.login:
+                Intent login = new Intent(this,LoginActivity.class);
+                startActivity(login);
+
             default:
                 fragmentClass = MainFragment.class;
                 break;
