@@ -10,8 +10,8 @@
             android:title="My workouts" />
 
         <item
-            android:id ="@+id/login"
-            android:title="Login"
+            android:id ="@+id/logout"
+            android:title="Log Out"
             />
 
     </group>

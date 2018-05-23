@@ -25,10 +25,6 @@ where routine_id = $1) t join (select id,name, user_id,comment, appraisal from r
 group by user_id,comment, appraisal, x.name, x.id) res", id, &.read(JSON::Any)
   routine.to_json
 end
-# {"appraisal":0,"comment":"",
-# "exercise":[{"exercise_name":"Dumbell bench press","reps":0,"sets":0},
-# {"exercise_name":"Dumbell bench press","reps":0,"sets":0},
-# {"exercise_name":"Dumbell bench press","reps":0,"sets":0}],"id":1,"name":"","user_id":2}
 
 post "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
@@ -44,6 +40,13 @@ post "/routine/" do |e|
   db.exec("insert into workout(user_id, routine_id, date, location) values ($1,$2,$3,$4)", routine.user_id, id, time, location)
   time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
   STDOUT.puts time
+end
+
+post "/token/" do |e|
+  url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + e.params.json["tokenId"].to_s
+  response = HTTP::Client.get url
+  sub = JSON.parse(response.body)["sub"].to_s
+  sub
 end
 
 Kemal.run

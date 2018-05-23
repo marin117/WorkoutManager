@@ -22,6 +22,7 @@ import android.view.MenuItem;
 
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.Fragments.AddTypeFragment;
+import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
@@ -53,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        MainFragment mainFragment = new MainFragment();
+        LoginFragment loginFragment = new LoginFragment();
         getSupportFragmentManager().beginTransaction().
-                add(R.id.main_fragment, mainFragment).commit();
+                add(R.id.main_fragment, loginFragment).commit();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -104,11 +105,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.personal_workouts:
                 fragmentClass = AddTypeFragment.class;
                 break;
-
-            case R.id.login:
-                Intent login = new Intent(this,LoginActivity.class);
-                startActivity(login);
-
+            case R.id.logout:
+                fragmentClass = MainFragment.class;
+                LoginFragment.signOut();
+                break;
             default:
                 fragmentClass = MainFragment.class;
                 break;
