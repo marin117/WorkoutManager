@@ -8,6 +8,7 @@ class Routine
     exercise:  Array(Exercise),
     name:      String,
     id:        Int32,
-    user_id:   Int32,
+    user_id:   String,
+    types:     Array(String),
   })
 end

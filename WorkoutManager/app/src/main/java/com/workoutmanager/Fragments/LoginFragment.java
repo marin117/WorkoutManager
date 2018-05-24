@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.GoogleToken;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.GoogleAccount;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
     private int RC_SIGN_IN = 2311;
-    private static GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Nullable
     @Override
@@ -47,14 +48,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         setHasOptionsMenu(false);
 
         signInButton.setOnClickListener(this);
+        mGoogleSignInClient = new GoogleAccount(getContext()).getClient();
 
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
-                .build();
+        GoogleAccount googleAccount = new GoogleAccount(getContext());
+        mGoogleSignInClient = googleAccount.getClient();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(getContext(), gso);
         return view;
     }
 
@@ -70,15 +69,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
     }
 
-    public static void signOut(){
-        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
-            }
-        });
-    }
 
     private void signIn(){
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();

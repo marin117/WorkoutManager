@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.Fragments.AddTypeFragment;
 import com.workoutmanager.Fragments.LoginFragment;
@@ -27,6 +29,7 @@ import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.GoogleAccount;
 
 import java.util.List;
 
@@ -95,36 +98,48 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectDrawerItem(MenuItem item){
         Fragment fragment = null;
-        Class fragmentClass;
+        final Class fragmentClass;
 
         switch (item.getItemId()){
 
             case R.id.home:
-                fragmentClass = MainFragment.class;
+                changeFragments(new MainFragment(), false);
                 break;
             case R.id.personal_workouts:
-                fragmentClass = AddTypeFragment.class;
+                changeFragments(new AddTypeFragment(), false);
                 break;
             case R.id.logout:
-                fragmentClass = MainFragment.class;
-                LoginFragment.signOut();
+                GoogleAccount account = new GoogleAccount(getApplicationContext());
+                account.getClient().signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                     changeFragments(new LoginFragment(), true);
+                    }
+                });
                 break;
             default:
-                fragmentClass = MainFragment.class;
+                changeFragments(new MainFragment(),false);
                 break;
         }
-
-        try{
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.main_fragment, fragment).addToBackStack(null).commit();
 
         item.setChecked(true);
         mDrawerLayout.closeDrawers();
+    }
+
+    private void changeFragments(Fragment fragment, boolean isLogout){
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (isLogout) {
+            fragmentManager.beginTransaction().
+                    replace(R.id.main_fragment, fragment).
+                    commit();
+        }
+        fragmentManager.beginTransaction().
+                replace(R.id.main_fragment, fragment).
+                addToBackStack(null).
+                commit();
+
     }
 
 }

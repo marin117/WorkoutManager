@@ -14,13 +14,16 @@ public class Routine {
     private Integer id;
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private String userId;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("exercise")
     @Expose
     private List<Exercise> exercise = null;
+    @SerializedName("types")
+    @Expose
+    private ArrayList<String> types;
     @SerializedName("comment")
     @Expose
     private String comment;
@@ -29,12 +32,13 @@ public class Routine {
     private Integer appraisal;
 
     public Routine(){
-        this.userId = 2;
+        this.userId = "116802465364452181034";
         this.id = 1;
         this.name = "";
         exercise = new ArrayList<Exercise>();
         this.appraisal = 0;
         this.comment="";
+        this.types = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -45,11 +49,11 @@ public class Routine {
         this.id = id;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -89,4 +93,11 @@ public class Routine {
         this.appraisal = appraisal;
     }
 
+    public ArrayList<String> getTypes() {
+        return types;
+    }
+
+    public void setTypes(ArrayList<String> types) {
+        this.types = types;
+    }
 }

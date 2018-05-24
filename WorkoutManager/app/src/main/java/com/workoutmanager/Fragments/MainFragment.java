@@ -1,6 +1,5 @@
 package com.workoutmanager.Fragments;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
@@ -74,10 +74,16 @@ public class MainFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Workout>> call, Throwable t) {
                 Log.e("TAG", t.getMessage());
-                //Toast.makeText(getApplicationContext(), "Failure",
-                //       Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failure",
+                       Toast.LENGTH_SHORT).show();
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData();
     }
 }

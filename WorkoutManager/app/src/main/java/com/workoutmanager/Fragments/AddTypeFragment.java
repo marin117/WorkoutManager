@@ -85,6 +85,7 @@ public class AddTypeFragment extends Fragment {
                 return true;
             case R.id.confirm:
                 routine.setName(routineName.getText().toString());
+                routine.setTypes(items);
                 mViewModel.setRoutine(routine);
                 mViewModel.setTypes(items);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
