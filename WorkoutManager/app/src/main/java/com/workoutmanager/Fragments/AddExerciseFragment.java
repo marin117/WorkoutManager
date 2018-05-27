@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +37,7 @@ import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
 import com.workoutmanager.ViewModel.AddExerciseViewModel;
 
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,6 +78,7 @@ public class AddExerciseFragment extends Fragment {
                         });
             }
         });
+
     }
 
     @Nullable
@@ -89,6 +93,7 @@ public class AddExerciseFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         initExercise();
         setHasOptionsMenu(true);
+
 
         return view;
     }
@@ -128,20 +133,21 @@ public class AddExerciseFragment extends Fragment {
                         call.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                                Toast.makeText(getContext(), "dobio sam odg", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getContext(), "dobio sam odg", Toast.LENGTH_LONG).show();
+
                             }
 
                             @Override
                             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                                Toast.makeText(getContext(), "nisam odg", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getContext(), "nisam odg", Toast.LENGTH_LONG).show();
 
                             }
                         });
 
+                        goHome();
                     }
                 });
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+
                 return true;
 
             default:
@@ -150,11 +156,19 @@ public class AddExerciseFragment extends Fragment {
         return false;
     }
 
+
     private void initExercise(){
         int INIT_NUMBER = 3;
         for (int i =0; i < INIT_NUMBER; i++) {
             items.add(new Exercise());
         }
+    }
+
+
+    private void goHome(){
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 }

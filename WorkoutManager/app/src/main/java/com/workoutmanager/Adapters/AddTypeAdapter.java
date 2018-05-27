@@ -26,7 +26,7 @@ public class AddTypeAdapter extends RecyclerView.Adapter<AddTypeAdapter.TypeHold
     public class TypeHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public Spinner spinner;
-        public Button delete;
+        Button delete;
 
         TypeHolder(View view) {
             super(view);
@@ -45,9 +45,6 @@ public class AddTypeAdapter extends RecyclerView.Adapter<AddTypeAdapter.TypeHold
                 }
             });
 
-            if(items.size() == 1) delete.setVisibility(View.INVISIBLE);
-            else delete.setVisibility(View.VISIBLE);
-
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -56,6 +53,7 @@ public class AddTypeAdapter extends RecyclerView.Adapter<AddTypeAdapter.TypeHold
                     notifyItemRemoved(getAdapterPosition());
                 }
             });
+
 
         }
     }
@@ -82,6 +80,11 @@ public class AddTypeAdapter extends RecyclerView.Adapter<AddTypeAdapter.TypeHold
                 (context, android.R.layout.simple_spinner_dropdown_item, types);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         holder.spinner.setAdapter(typeAdapter);
+        holder.spinner.setSelection(typeAdapter.getPosition(items.get(position)));
+        if (position == 0){
+            holder.delete.setVisibility(View.GONE);
+        }
+        else holder.delete.setVisibility(View.VISIBLE);
     }
 
     @Override

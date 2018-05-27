@@ -43,14 +43,10 @@ public class AddTypeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(getActivity())
                 .get(AddExerciseViewModel.class);
+        items = new ArrayList<String>(3);
+        items.add("");
+        init();
 
-        mViewModel.getTypes().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable List<String> types) {
-                mAdapter = new AddTypeAdapter( getActivity().getApplicationContext(), types, items);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-        });
     }
 
     @Nullable
@@ -61,16 +57,20 @@ public class AddTypeFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.add_type_recycler_view);
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        items = new ArrayList<String>(3);
         routineName = view.findViewById(R.id.edit_routine_name);
-        items.add("");
         sharedPreferencesUtil = new SharedPreferencesUtil(getActivity());
         setHasOptionsMenu(true);
         FloatingActionButton fab = getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
 
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("TAAAAAAAAG", String.valueOf(items.size()));
+        init();
     }
 
     @Override
@@ -108,6 +108,16 @@ public class AddTypeFragment extends Fragment {
                 break;
         }
         return false;
+    }
+    private void init(){
+
+        mViewModel.getTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable List<String> types) {
+                mAdapter = new AddTypeAdapter( getActivity().getApplicationContext(), types, items);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 
 }

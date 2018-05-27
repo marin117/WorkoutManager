@@ -61,18 +61,8 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         navigationView = findViewById(R.id.nav_view);
         sharedPreferencesUtil = new SharedPreferencesUtil(this);
 
-        LoginFragment loginFragment = new LoginFragment();
-        getSupportFragmentManager().beginTransaction().
-                add(R.id.main_fragment, loginFragment).commit();
+        changeFragments(new LoginFragment(), true);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeFragments(new AddTypeFragment(), false);
-            }
-        });
 
         selectDrawerContent(navigationView);
 
