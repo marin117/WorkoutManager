@@ -2,6 +2,8 @@ package com.workoutmanager.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.workoutmanager.Activity.MainActivity;
 import com.workoutmanager.Adapters.ExerciseAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Exercise;
@@ -34,7 +37,9 @@ public class RoutineDetailFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private TextView text_owner;
+    private TextView text_name;
+    private TextView text_stars;
     private MainViewModel mainViewModel;
     @Nullable
     @Override
@@ -45,27 +50,39 @@ public class RoutineDetailFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+         text_owner = view.findViewById(R.id.detail_user);
+         text_name = view.findViewById(R.id.detail_name);
+         text_stars = view.findViewById(R.id.detail_stars);
+
+        //handleData();
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mainViewModel = ViewModelProviders.of(getActivity()).
                 get(MainViewModel.class);
 
-        mainViewModel.getRoutineID().observe(getActivity(), new Observer<Workout>() {
+        handleData();
+    }
+
+
+    private void handleData(){
+        mainViewModel.getRoutineID().observe(this, new Observer<Workout>() {
             @Override
             public void onChanged(@Nullable Workout workout) {
                 RetrofitClient retrofit = new RetrofitClient();
-                Call<Routine> call = retrofit.createClient().routineDetails(workout.getRoutineId());
                 final String owner = workout.getOwner();
-
+                Call<Routine> call = retrofit.createClient().routineDetails(workout.getRoutineId());
                 call.enqueue(new Callback<Routine>() {
                     @Override
                     public void onResponse(@NonNull Call<Routine> call, @NonNull Response<Routine> response){
-                        TextView text_name = view.findViewById(R.id.detail_name);
-                        TextView text_stars = view.findViewById(R.id.detail_stars);
-                        TextView text_owner = view.findViewById(R.id.detail_user);
-                        text_name.setText(getActivity().getString(R.string.detail_name, response.body().getName()));
-                        text_owner.setText(getActivity().getString(R.string.detail_owner, owner));
+                        text_name.setText(response.body().getName());
+                        text_owner.setText(getString(R.string.detail_owner, owner));
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
-
                     }
 
                     @Override
@@ -80,7 +97,5 @@ public class RoutineDetailFragment extends Fragment {
 
             }
         });
-
-        return view;
     }
 }

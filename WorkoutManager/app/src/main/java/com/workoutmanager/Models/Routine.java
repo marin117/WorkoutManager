@@ -3,6 +3,8 @@ package com.workoutmanager.Models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.workoutmanager.R;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +34,24 @@ public class Routine {
     private Integer appraisal;
 
     public Routine(){
-        this.userId = "116802465364452181034";
+        this.userId = "";
         this.id = 1;
         this.name = "";
-        exercise = new ArrayList<Exercise>();
+        this.exercise = new ArrayList<Exercise>();
         this.appraisal = 0;
         this.comment="";
         this.types = new ArrayList<>();
+    }
+
+    public Routine(String user_id, String name, ArrayList<String> types){
+        this.userId = user_id;
+        this.id = 1;
+        this.name = name;
+        this.types = types;
+        this.exercise = new ArrayList<Exercise>();
+        this.appraisal = 0;
+        this.comment="";
+
     }
 
     public Integer getId() {

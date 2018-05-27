@@ -29,7 +29,6 @@ end
 
 post "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
-  STDOUT.puts routine.exercise
   time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
   location = e.params.json["location"].as(String)
   query = "insert into routine_exercise(routine_id, exercise_name, sets, reps) values ($1, $2, $3, $4)"

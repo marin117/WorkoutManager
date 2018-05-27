@@ -1,8 +1,11 @@
 package com.workoutmanager.Fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +20,7 @@ import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.MenuInterface;
 import com.workoutmanager.ViewModel.MainViewModel;
 
 import java.util.List;
@@ -32,11 +36,26 @@ public class MainFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout swipeRefresh;
     private MainViewModel mainViewModel;
+    private MenuInterface menuInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            menuInterface = (MenuInterface) getActivity();
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString() + " must implement interface.");
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_fragment, container, false);
+
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+        menuInterface.unlockDrawer();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(view.getContext());
@@ -51,7 +70,6 @@ public class MainFragment extends Fragment {
                 getData();
             }
         });
-
         getData();
 
         return view;
@@ -74,9 +92,6 @@ public class MainFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Workout>> call, Throwable t) {
                 Log.e("TAG", t.getMessage());
-                Toast.makeText(getContext(), "Failure",
-                       Toast.LENGTH_SHORT).show();
-
             }
         });
     }

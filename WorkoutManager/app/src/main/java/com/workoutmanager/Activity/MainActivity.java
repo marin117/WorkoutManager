@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
+import com.workoutmanager.Utils.MenuInterface;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 
 import java.util.List;
 
@@ -37,10 +40,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MenuInterface {
 
 
     private DrawerLayout mDrawerLayout;
+    private NavigationView navigationView;
+    private SharedPreferencesUtil sharedPreferencesUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_compass);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-
+        navigationView = findViewById(R.id.nav_view);
+        sharedPreferencesUtil = new SharedPreferencesUtil(this);
 
         LoginFragment loginFragment = new LoginFragment();
         getSupportFragmentManager().beginTransaction().
@@ -66,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddWorkoutActivity.class));
+                changeFragments(new AddTypeFragment(), false);
             }
         });
 
@@ -113,12 +117,13 @@ public class MainActivity extends AppCompatActivity {
                 account.getClient().signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                     changeFragments(new LoginFragment(), true);
+                        sharedPreferencesUtil.clearData();
+                        changeFragments(new LoginFragment(), true);
                     }
                 });
                 break;
             default:
-                changeFragments(new MainFragment(),false);
+                changeFragments(new MainFragment(),true);
                 break;
         }
 
@@ -126,20 +131,34 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
     }
 
-    private void changeFragments(Fragment fragment, boolean isLogout){
+    private void changeFragments(Fragment fragment, boolean noBackStack){
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (isLogout) {
+        if (noBackStack ) {
             fragmentManager.beginTransaction().
                     replace(R.id.main_fragment, fragment).
                     commit();
+
+        }else {
+            fragmentManager.beginTransaction().
+                    replace(R.id.main_fragment, fragment).
+                    addToBackStack(null).
+                    commit();
         }
-        fragmentManager.beginTransaction().
-                replace(R.id.main_fragment, fragment).
-                addToBackStack(null).
-                commit();
 
     }
 
+    @Override
+    public void lockDrawer() {
+        getSupportActionBar().hide();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void unlockDrawer() {
+        getSupportActionBar().show();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+    }
 }

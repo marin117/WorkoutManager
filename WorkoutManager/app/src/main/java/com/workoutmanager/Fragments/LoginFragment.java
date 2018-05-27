@@ -1,15 +1,22 @@
 package com.workoutmanager.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -23,6 +30,8 @@ import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.GoogleToken;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
+import com.workoutmanager.Utils.MenuInterface;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 
 import java.io.IOException;
 
@@ -32,8 +41,20 @@ import retrofit2.Response;
 
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
+    private MenuInterface menuInterface;
     private int RC_SIGN_IN = 2311;
     private GoogleSignInClient mGoogleSignInClient;
+    private SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            menuInterface = (MenuInterface) getActivity();
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString() + " must implement interface.");
+        }
+    }
 
     @Nullable
     @Override
@@ -45,17 +66,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
         SignInButton signInButton = view.findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        setHasOptionsMenu(false);
 
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
+        menuInterface.lockDrawer();
         signInButton.setOnClickListener(this);
         mGoogleSignInClient = new GoogleAccount(getContext()).getClient();
 
 
         GoogleAccount googleAccount = new GoogleAccount(getContext());
+        sharedPreferencesUtil = new SharedPreferencesUtil(getActivity());
         mGoogleSignInClient = googleAccount.getClient();
 
         return view;
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -82,7 +109,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             sendToken(idToken);
 
             Log.d("TAAAAAAAG", idToken);
-            mainFragmentChange();
 
             // Signed in successfully, show authenticated UI.
         } catch (ApiException e) {
@@ -128,11 +154,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d("TAAAAAAG", response.body());
-
+                sharedPreferencesUtil.writeData(getString(R.string.id), response.body());
+                mainFragmentChange();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                mGoogleSignInClient.signOut();
+                Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -54,6 +54,29 @@ public class AddExerciseFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Exercise> items;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(getActivity())
+                .get(AddExerciseViewModel.class);
+
+        mViewModel.getTypesFrag().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<String> typesFrag) {
+                types = typesFrag;
+                mViewModel.getExercises(types.toArray(new String[0])).observe(getActivity(),
+                        new Observer<List<String>>(){
+                            @Override
+                            public void onChanged(@Nullable List<String> exercises) {
+                                mAdapter = new AddExerciseAdapter(getContext(), exercises, items);
+                                mRecyclerView.setAdapter(mAdapter);
+                            }
+                        });
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,30 +90,15 @@ public class AddExerciseFragment extends Fragment {
         initExercise();
         setHasOptionsMenu(true);
 
-        mViewModel = ViewModelProviders.of(getActivity())
-                .get(AddExerciseViewModel.class);
-
-        mViewModel.getTypesFrag().observe(getActivity(), new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(@Nullable ArrayList<String> typesFrag) {
-                types = typesFrag;
-                mViewModel.getExercises(types.toArray(new String[0])).observe(getActivity(),
-                        new Observer<List<String>>(){
-                    @Override
-                    public void onChanged(@Nullable List<String> exercises) {
-                        mAdapter = new AddExerciseAdapter(getContext(), exercises, items);
-                        mRecyclerView.setAdapter(mAdapter);
-                    }
-                });
-            }
-        });
-
         return view;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_element_menu, menu);
         MenuItem confirmButton = menu.findItem(R.id.confirm);
         confirmButton.setIcon(R.drawable.confirm_button);
 
@@ -117,8 +125,6 @@ public class AddExerciseFragment extends Fragment {
                         AddRoutineModel routineModel = new AddRoutineModel(routine);
                         RetrofitClient retrofit = new RetrofitClient();
                         Call<String> call = retrofit.createClient().sendRoutine(routineModel);
-
-
                         call.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {

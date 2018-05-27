@@ -5,10 +5,12 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.workoutmanager.Adapters.AddTypeAdapter;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.AddExerciseViewModel;
 
 import java.util.ArrayList;
@@ -32,8 +35,24 @@ public class AddTypeFragment extends Fragment {
      private RecyclerView.LayoutManager mLayoutManager;
      private ArrayList<String> items;
      private AddExerciseViewModel mViewModel;
-     private Routine routine;
      private EditText routineName;
+     private SharedPreferencesUtil sharedPreferencesUtil;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = ViewModelProviders.of(getActivity())
+                .get(AddExerciseViewModel.class);
+
+        mViewModel.getTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable List<String> types) {
+                mAdapter = new AddTypeAdapter( getActivity().getApplicationContext(), types, items);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -43,21 +62,12 @@ public class AddTypeFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         items = new ArrayList<String>(3);
-        routine = new Routine();
         routineName = view.findViewById(R.id.edit_routine_name);
         items.add("");
+        sharedPreferencesUtil = new SharedPreferencesUtil(getActivity());
         setHasOptionsMenu(true);
-
-        mViewModel = ViewModelProviders.of(getActivity())
-                .get(AddExerciseViewModel.class);
-
-        mViewModel.getTypes().observe(getActivity(), new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable List<String> types) {
-                mAdapter = new AddTypeAdapter( getActivity().getApplicationContext(), types, items);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-        });
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
 
 
         return view;
@@ -66,6 +76,7 @@ public class AddTypeFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_element_menu, menu);
 
     }
 
@@ -84,12 +95,12 @@ public class AddTypeFragment extends Fragment {
                 }
                 return true;
             case R.id.confirm:
-                routine.setName(routineName.getText().toString());
-                routine.setTypes(items);
+                Routine routine = new Routine(sharedPreferencesUtil.readData(getString(R.string.id)),
+                        routineName.getText().toString(), items);
                 mViewModel.setRoutine(routine);
                 mViewModel.setTypes(items);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.type_container ,new AddExerciseFragment());
+                fragmentTransaction.replace(R.id.main_fragment ,new AddExerciseFragment()).addToBackStack(null);
                 fragmentTransaction.commit();
                 return true;
 
@@ -98,4 +109,5 @@ public class AddTypeFragment extends Fragment {
         }
         return false;
     }
+
 }
