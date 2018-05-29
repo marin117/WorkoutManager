@@ -20,11 +20,26 @@ end
 
 get "/routine/" do |e|
   id = e.params.query["id"]
-  routine = db.query_one "select row_to_json(res) from (select id, user_id,x.name, array_to_json(array_agg(row_to_json(t))) as exercise, comment, appraisal
-   from (select routine_id, exercise_name, sets, reps from routine_exercise
-   where routine_id = $1) t join (select id,name, user_id,comment, appraisal from routine) x on x.id = t.routine_id
-   group by user_id,comment, appraisal, x.name, x.id) res", id, &.read(JSON::Any)
+  user_id = e.params.query["user_id"]
+  routine = db.query_one "select row_to_json(res) from (select id, x.user_id, x.name, array_to_json(array_agg(row_to_json(t))) as exercise, comment, appraisal, case when
+c.user_id = b.user_id then true else false end as isMy
+from (select routine_id, exercise_name, sets, reps from routine_exercise
+where routine_id = $2) t join (select id,name, user_id,comment, appraisal from routine) x on x.id = t.routine_id left join
+(select * from workout where user_id =$1) b on b.routine_id  = x.id left join
+(select * from workout where routine_id = $2 and user_id =$1)
+c on c.routine_id = x.id
+group by x.user_id,comment, appraisal, x.name, x.id, b.user_id, c.user_id) res;;", user_id, id, &.read(JSON::Any)
   routine.to_json
+end
+
+put "/routine/" do |e|
+  routine = Routine.from_json(e.params.json["routine"].to_json)
+  time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
+  location = e.params.json["location"].as(String)
+
+  db.exec "insert into workout (user_id, routine_id, date, location) values ($1, $2, $3, $4)", routine.user_id, routine.id, time, location
+
+  "response"
 end
 
 post "/routine/" do |e|

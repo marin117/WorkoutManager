@@ -10,5 +10,6 @@ class Routine
     id:        Int32,
     user_id:   String,
     types:     Array(String),
+    ismy:      Bool,
   })
 end

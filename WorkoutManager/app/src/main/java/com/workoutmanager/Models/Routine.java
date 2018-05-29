@@ -32,8 +32,12 @@ public class Routine {
     @SerializedName("appraisal")
     @Expose
     private Integer appraisal;
+    @SerializedName("ismy")
+    @Expose
+    private Boolean isMy;
 
-    public Routine(){
+
+    Routine(){
         this.userId = "";
         this.id = 1;
         this.name = "";
@@ -41,6 +45,7 @@ public class Routine {
         this.appraisal = 0;
         this.comment="";
         this.types = new ArrayList<>();
+        this.isMy = true;
     }
 
     public Routine(String user_id, String name, ArrayList<String> types){
@@ -51,6 +56,8 @@ public class Routine {
         this.exercise = new ArrayList<Exercise>();
         this.appraisal = 0;
         this.comment="";
+        this.isMy = true;
+
 
     }
 
@@ -112,5 +119,13 @@ public class Routine {
 
     public void setTypes(ArrayList<String> types) {
         this.types = types;
+    }
+
+
+    public Boolean getIsmy() {
+        return isMy;
+    }
+    public void setIsmy(Boolean ismy) {
+        this.isMy = ismy;
     }
 }

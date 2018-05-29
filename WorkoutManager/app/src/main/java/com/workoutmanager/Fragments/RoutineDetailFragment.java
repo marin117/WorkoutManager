@@ -23,7 +23,9 @@ import android.widget.Toast;
 import com.workoutmanager.Activity.MainActivity;
 import com.workoutmanager.Adapters.ExerciseAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
+import com.workoutmanager.Models.AddRoutineModel;
 import com.workoutmanager.Models.Exercise;
+import com.workoutmanager.Models.IdModel;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
@@ -46,7 +48,9 @@ public class RoutineDetailFragment extends Fragment {
     private TextView text_stars;
     private MainViewModel mainViewModel;
     private MenuItem addItem;
-    private SharedPreferencesUtil sharedPreferencesUtil;
+    private String userId;
+    private RetrofitClient retrofit;
+    private Routine currentRoutine;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,15 +59,14 @@ public class RoutineDetailFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.detail_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        setHasOptionsMenu(true);
 
-         text_owner = view.findViewById(R.id.detail_user);
-         text_name = view.findViewById(R.id.detail_name);
-         text_stars = view.findViewById(R.id.detail_stars);
-         addItem = view.findViewById(R.id.new_routine);
+        text_owner = view.findViewById(R.id.detail_user);
+        text_name = view.findViewById(R.id.detail_name);
+        text_stars = view.findViewById(R.id.detail_stars);
+        addItem = view.findViewById(R.id.new_routine);
 
-         sharedPreferencesUtil = new SharedPreferencesUtil(getActivity());
-
+        retrofit = new RetrofitClient();
+        userId = new IdModel(getActivity()).getId();
 
 
         return view;
@@ -72,10 +75,12 @@ public class RoutineDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mainViewModel = ViewModelProviders.of(getActivity()).
                 get(MainViewModel.class);
 
         handleData();
+
     }
 
 
@@ -83,9 +88,10 @@ public class RoutineDetailFragment extends Fragment {
         mainViewModel.getRoutineID().observe(this, new Observer<Workout>() {
             @Override
             public void onChanged(@Nullable Workout workout) {
-                RetrofitClient retrofit = new RetrofitClient();
+
                 final String owner = workout.getOwner();
-                Call<Routine> call = retrofit.createClient().routineDetails(workout.getRoutineId());
+                Call<Routine> call = retrofit.createClient().routineDetails(workout.getRoutineId(),
+                        userId);
                 call.enqueue(new Callback<Routine>() {
                     @Override
                     public void onResponse(@NonNull Call<Routine> call, @NonNull Response<Routine> response){
@@ -93,10 +99,10 @@ public class RoutineDetailFragment extends Fragment {
                         text_owner.setText(getString(R.string.detail_owner, owner));
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
-
-                        if(sharedPreferencesUtil.readData(getString(R.string.id)).equals(response.body().getUserId())){
-                            addItem.setVisible(false);
+                        if (!response.body().getIsmy()){
+                            addItem.setVisible(true);
                         }
+                        currentRoutine = response.body();
                     }
 
                     @Override
@@ -113,11 +119,38 @@ public class RoutineDetailFragment extends Fragment {
         });
     }
 
+    public void sendRoutine(){
+        AddRoutineModel addRoutineModel = new AddRoutineModel(currentRoutine);
+        addRoutineModel.getRoutine().setUserId(userId);
+        Call<String> call = retrofit.createClient().addWorkout(addRoutineModel);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull  Call<String> call, @NonNull Response<String> response) {
+                Toast.makeText(getContext(), "Workout added", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
+
+            }
+        });
+        addItem.setVisible(false);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        addItem = menu.findItem(R.id.new_routine);
+        addItem.setVisible(false);
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.new_routine:
-                Log.d("TAAAAAAAAG", "dodaj u moje vježbe");
+                sendRoutine();
+
         }
         return false;
     }
