@@ -15,4 +15,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="id">user_id</string>
     <string name="no_connection">No connection to server.</string>
+    <string name="new_element">New element</string>
+    <string name="confirm">Confirm</string>
 </resources>

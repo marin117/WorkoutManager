@@ -110,7 +110,6 @@ public class AddTypeFragment extends Fragment {
         return false;
     }
     private void init(){
-
         mViewModel.getTypes().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable List<String> types) {

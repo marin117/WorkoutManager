@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
+<menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/new_item"
         android:icon="@android:drawable/ic_input_add"
-        android:title = "New element"
+        android:title = "@string/new_element"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/confirm"
-        android:title = "Confirm"
+        android:title = "@string/confirm"
         android:icon = "@drawable/forward_arrow"
         app:showAsAction="ifRoom" />
 

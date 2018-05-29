@@ -12,6 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -24,6 +27,7 @@ import com.workoutmanager.Models.Exercise;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.MainViewModel;
 
 import java.util.List;
@@ -41,6 +45,8 @@ public class RoutineDetailFragment extends Fragment {
     private TextView text_name;
     private TextView text_stars;
     private MainViewModel mainViewModel;
+    private MenuItem addItem;
+    private SharedPreferencesUtil sharedPreferencesUtil;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,12 +55,16 @@ public class RoutineDetailFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.detail_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        setHasOptionsMenu(true);
 
          text_owner = view.findViewById(R.id.detail_user);
          text_name = view.findViewById(R.id.detail_name);
          text_stars = view.findViewById(R.id.detail_stars);
+         addItem = view.findViewById(R.id.new_routine);
 
-        //handleData();
+         sharedPreferencesUtil = new SharedPreferencesUtil(getActivity());
+
+
 
         return view;
     }
@@ -83,6 +93,10 @@ public class RoutineDetailFragment extends Fragment {
                         text_owner.setText(getString(R.string.detail_owner, owner));
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
+
+                        if(sharedPreferencesUtil.readData(getString(R.string.id)).equals(response.body().getUserId())){
+                            addItem.setVisible(false);
+                        }
                     }
 
                     @Override
@@ -97,5 +111,20 @@ public class RoutineDetailFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.new_routine:
+                Log.d("TAAAAAAAAG", "dodaj u moje vježbe");
+        }
+        return false;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_to_my_routine_menu, menu);
     }
 }

@@ -21,7 +21,6 @@ public class AddTypeAdapter extends RecyclerView.Adapter<AddTypeAdapter.TypeHold
     private List<String> types;
     private Context context;
     private ArrayList<String> items;
-    private Button addButton;
 
     public class TypeHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
