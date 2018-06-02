@@ -18,6 +18,21 @@ join person on person.id = workout.user_id order by date desc) t;" do |rs|
   a.to_json
 end
 
+get "/:userId/workout" do |e|
+  user_id = e.params.url["userId"]
+  a = ""
+  STDOUT.puts user_id
+  query = db.query "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select routine_id, r.name, username, owner, location, date, r.appraisal from workout
+join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
+join person on person.id = workout.user_id where person.id = $1 order by date desc) t", user_id do |rs|
+    rs.each do
+      a = rs.read(JSON::Any)
+    end
+  end
+  a.to_json
+end
+
 get "/routine/" do |e|
   id = e.params.query["id"]
   user_id = e.params.query["user_id"]

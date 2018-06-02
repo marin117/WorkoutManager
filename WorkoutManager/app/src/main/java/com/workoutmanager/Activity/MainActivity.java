@@ -1,22 +1,33 @@
 package com.workoutmanager.Activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.workoutmanager.Fragments.AddTypeFragment;
 import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
+import com.workoutmanager.Fragments.MyWorkoutsFragment;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
 import com.workoutmanager.Utils.MenuInterface;
@@ -72,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         );
     }
 
+
     private void selectDrawerItem(MenuItem item){
         switch (item.getItemId()){
 
@@ -79,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
                 changeFragments(new MainFragment(), false);
                 break;
             case R.id.personal_workouts:
-                changeFragments(new AddTypeFragment(), false);
+                changeFragments(new MyWorkoutsFragment(), false);
                 break;
             case R.id.logout:
                 GoogleAccount account = new GoogleAccount(getApplicationContext());
@@ -132,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
             getSupportActionBar().show();
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
-
     }
+
+
 }

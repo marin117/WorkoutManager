@@ -29,6 +29,7 @@ import com.workoutmanager.Models.IdModel;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.DataHandler;
 import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.MainViewModel;
 
@@ -38,7 +39,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RoutineDetailFragment extends Fragment {
+public class RoutineDetailFragment extends Fragment implements DataHandler{
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -79,12 +80,12 @@ public class RoutineDetailFragment extends Fragment {
         mainViewModel = ViewModelProviders.of(getActivity()).
                 get(MainViewModel.class);
 
-        handleData();
+        getData();
 
     }
 
-
-    private void handleData(){
+    @Override
+    public void getData(){
         mainViewModel.getRoutineID().observe(this, new Observer<Workout>() {
             @Override
             public void onChanged(@Nullable Workout workout) {

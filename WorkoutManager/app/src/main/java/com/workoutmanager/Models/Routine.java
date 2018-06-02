@@ -37,7 +37,7 @@ public class Routine {
     private Boolean isMy;
 
 
-    Routine(){
+    public Routine(){
         this.userId = "";
         this.id = 1;
         this.name = "";

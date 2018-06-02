@@ -1,11 +1,11 @@
 package com.workoutmanager.Fragments;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,13 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.workoutmanager.Activity.MainActivity;
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
+import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
+import com.workoutmanager.Utils.DataHandler;
 import com.workoutmanager.Utils.MenuInterface;
 import com.workoutmanager.ViewModel.MainViewModel;
 
@@ -31,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements DataHandler {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -39,6 +39,13 @@ public class MainFragment extends Fragment {
     private SwipeRefreshLayout swipeRefresh;
     private MainViewModel mainViewModel;
     private MenuInterface menuInterface;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mainViewModel = ViewModelProviders.of(getActivity()).
+                get(MainViewModel.class);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -75,8 +82,6 @@ public class MainFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         swipeRefresh = view.findViewById(R.id.swipe_main);
-        mainViewModel = ViewModelProviders.of(getActivity()).
-                get(MainViewModel.class);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -89,7 +94,9 @@ public class MainFragment extends Fragment {
         return view;
     }
 
-    private void getData() {
+
+    @Override
+    public void getData() {
         RetrofitClient retrofit = new RetrofitClient();
         Call<List<Workout>> call = retrofit.createClient().workoutList();
 
@@ -115,4 +122,5 @@ public class MainFragment extends Fragment {
         super.onResume();
         getData();
     }
+
 }
