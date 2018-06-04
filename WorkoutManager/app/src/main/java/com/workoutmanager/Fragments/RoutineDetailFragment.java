@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,7 +56,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.routine_detail, container, false);
+        View view = inflater.inflate(R.layout.routine_detail, container, false);
 
         mRecyclerView = view.findViewById(R.id.detail_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -69,6 +70,15 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         retrofit = new RetrofitClient();
         userId = new IdModel(getActivity()).getId();
 
+        text_owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().
+                        addToBackStack(null).
+                        replace(R.id.main_fragment,new UserFragment()).commit();
+            }
+        });
 
         return view;
     }
@@ -85,11 +95,16 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getData();
+    }
+
+    @Override
     public void getData(){
         mainViewModel.getRoutineID().observe(this, new Observer<Workout>() {
             @Override
             public void onChanged(@Nullable Workout workout) {
-
                 final String owner = workout.getOwner();
                 Call<Routine> call = retrofit.createClient().routineDetails(workout.getRoutineId(),
                         userId);
@@ -104,6 +119,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
                             addItem.setVisible(true);
                         }
                         currentRoutine = response.body();
+                        mainViewModel.setUserId(response.body().getUserId());
                     }
 
                     @Override

@@ -4,6 +4,7 @@ import com.workoutmanager.Models.AddRoutineModel;
 import com.workoutmanager.Models.GoogleToken;
 import com.workoutmanager.Models.IdModel;
 import com.workoutmanager.Models.Routine;
+import com.workoutmanager.Models.User;
 import com.workoutmanager.Models.Workout;
 
 import java.util.List;
@@ -40,5 +41,8 @@ public interface RestInterface {
 
     @GET("/{userId}/workout/")
     Call<List<Workout>> myWorkoutList(@Path("userId") String userId);
+
+    @GET("/user/")
+    Call<User> getUserInfo(@Query("userId") String userId);
 
 }

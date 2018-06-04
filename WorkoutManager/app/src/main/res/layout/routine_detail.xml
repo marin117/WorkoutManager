@@ -23,6 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/detail_name"
             android:id="@+id/detail_user"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_margin="5dp"
             android:textSize="15sp"
             android:textColor="@color/textColor"

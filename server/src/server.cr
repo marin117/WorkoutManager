@@ -33,6 +33,14 @@ join person on person.id = workout.user_id where person.id = $1 order by date de
   a.to_json
 end
 
+get "/user/" do |e|
+  user_id = e.params.query["userId"]
+  STDOUT.puts user_id
+  response = ""
+  response = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
+  response.to_json
+end
+
 get "/routine/" do |e|
   id = e.params.query["id"]
   user_id = e.params.query["user_id"]

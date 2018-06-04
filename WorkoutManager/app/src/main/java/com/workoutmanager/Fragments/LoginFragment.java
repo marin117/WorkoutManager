@@ -6,14 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -21,10 +17,8 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.GoogleToken;
@@ -32,8 +26,6 @@ import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
 import com.workoutmanager.Utils.MenuInterface;
 import com.workoutmanager.Utils.SharedPreferencesUtil;
-
-import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -152,14 +144,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         Call<String> call = retrofit.createClient().sendToken(token);
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call,@NonNull Response<String> response) {
                 Log.d("TAAAAAAG", response.body());
                 sharedPreferencesUtil.writeData(getString(R.string.id), response.body());
                 mainFragmentChange();
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
                 mGoogleSignInClient.signOut();
                 Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
 
