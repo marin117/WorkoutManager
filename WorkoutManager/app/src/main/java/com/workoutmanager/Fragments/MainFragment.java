@@ -138,12 +138,25 @@ public class MainFragment extends Fragment implements DataHandler {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 filter = query;
+                if (query.equals(""))
+                    filter = null;
+                swipeRefresh.setRefreshing(true);
                 getData();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        search.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                filter = null;
+                swipeRefresh.setRefreshing(true);
+                getData();
                 return false;
             }
         });

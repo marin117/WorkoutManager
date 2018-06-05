@@ -9,6 +9,7 @@ get "/" do |e|
   filter = e.params.query.fetch("filter", nil)
   response = ""
   if (filter == nil)
+    STDOUT.puts filter
     response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
 from (select routine_id, r.name, username,owner, location, date, r.appraisal,
 case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
@@ -16,14 +17,18 @@ join (select routine.*, username as owner from routine join person on person.id 
 join person on person.id = workout.user_id order by date desc) as t", &.read(JSON::Any)
   else
     filter = "%#{filter}%"
+    STDOUT.puts filter
     response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
 from (select workout.routine_id, r.name, username,owner, location, date, r.appraisal,
 case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r
-on r.id = workout.routine_id
-join (select * from routine_type where type_name like $1) as rt on r.id = rt.routine_id
-join person on person.id = workout.user_id order by date desc) t", filter, &.read(JSON::Any)
+on r.id = workout.routine_id join (select distinct(id) from routine join routine_type on routine.id = routine_id
+join routine_exercise on id = routine_exercise.routine_id
+where (lower(routine.name) like lower($1) or lower(type_name) like lower($1) or lower(exercise_name) like lower($1))
+) as rt on r.id = rt.id
+join person on person.id = workout.user_id order by date desc) t;", filter, &.read(JSON::Any)
   end
+  STDOUT.puts response.to_json
   response.to_json
 end
 
