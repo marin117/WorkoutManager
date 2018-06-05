@@ -1,37 +1,28 @@
 package com.workoutmanager.Activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.workoutmanager.Fragments.AddTypeFragment;
 import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
-import com.workoutmanager.Fragments.MyWorkoutsFragment;
+import com.workoutmanager.Fragments.UserFragment;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
 import com.workoutmanager.Utils.MenuInterface;
 import com.workoutmanager.Utils.SharedPreferencesUtil;
+import com.workoutmanager.ViewModel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity implements MenuInterface {
 
@@ -39,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private SharedPreferencesUtil sharedPreferencesUtil;
+    private MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_compass);
         navigationView = findViewById(R.id.nav_view);
         sharedPreferencesUtil = new SharedPreferencesUtil(this);
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
         changeFragments(new LoginFragment(), true);
 
@@ -91,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
                 changeFragments(new MainFragment(), false);
                 break;
             case R.id.personal_workouts:
-                changeFragments(new MyWorkoutsFragment(), false);
+                mainViewModel.setUserId(sharedPreferencesUtil.readData(getString(R.string.id)));
+                changeFragments(new UserFragment(), false);
                 break;
             case R.id.logout:
                 GoogleAccount account = new GoogleAccount(getApplicationContext());

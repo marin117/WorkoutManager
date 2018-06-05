@@ -6,16 +6,25 @@ require "json"
 db = DB.open "postgres:///WorkoutManagerDB"
 
 get "/" do |e|
-  a = ""
-  query = db.query "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
-from (select routine_id, r.name, username, owner, location, date, r.appraisal from workout
+  filter = e.params.query.fetch("filter", nil)
+  response = ""
+  if (filter == nil)
+    response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select routine_id, r.name, username,owner, location, date, r.appraisal,
+case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
-join person on person.id = workout.user_id order by date desc) t;" do |rs|
-    rs.each do
-      a = rs.read(JSON::Any)
-    end
+join person on person.id = workout.user_id order by date desc) as t", &.read(JSON::Any)
+  else
+    filter = "%#{filter}%"
+    response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select workout.routine_id, r.name, username,owner, location, date, r.appraisal,
+case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
+join (select routine.*, username as owner from routine join person on person.id = user_id) as r
+on r.id = workout.routine_id
+join (select * from routine_type where type_name like $1) as rt on r.id = rt.routine_id
+join person on person.id = workout.user_id order by date desc) t", filter, &.read(JSON::Any)
   end
-  a.to_json
+  response.to_json
 end
 
 get "/:userId/workout" do |e|
@@ -23,9 +32,10 @@ get "/:userId/workout" do |e|
   a = ""
   STDOUT.puts user_id
   query = db.query "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
-from (select routine_id, r.name, username, owner, location, date, r.appraisal from workout
+from (select routine_id, r.name, username,owner, location, date, r.appraisal,
+case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
-join person on person.id = workout.user_id where person.id = $1 order by date desc) t", user_id do |rs|
+join person on person.id = workout.user_id where person.id = $1 order by date desc) as t", user_id do |rs|
     rs.each do
       a = rs.read(JSON::Any)
     end
@@ -37,7 +47,16 @@ get "/user/" do |e|
   user_id = e.params.query["userId"]
   STDOUT.puts user_id
   response = ""
-  response = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
+  user_query = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
+  user = User.from_json(user_query.to_json)
+  workout_query = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select routine_id, r.name, username,owner, location, date, r.appraisal,
+case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
+join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
+join person on person.id = workout.user_id where person.id = $1 order by date desc) as t", user_id, &.read(JSON::Any)
+  workout = Array(Workout).from_json(workout_query.to_json)
+  response = UserDetails.new(user, workout)
+  STDOUT.puts response.to_json
   response.to_json
 end
 

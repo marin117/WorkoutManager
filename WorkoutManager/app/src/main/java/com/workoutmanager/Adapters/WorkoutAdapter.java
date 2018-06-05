@@ -1,8 +1,10 @@
 package com.workoutmanager.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
 
     private List<Workout> workoutList;
     private MainViewModel mainViewModel;
+    private Context context;
 
     public class WorkoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
@@ -57,9 +60,10 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         }
     }
 
-    public WorkoutAdapter(List<Workout> workoutList, MainViewModel mainViewModel){
+    public WorkoutAdapter(List<Workout> workoutList, MainViewModel mainViewModel, Context context){
         this.workoutList = workoutList;
         this.mainViewModel = mainViewModel;
+        this.context = context;
     }
 
     @Override
@@ -74,12 +78,16 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
     @Override
     public void onBindViewHolder(WorkoutAdapter.WorkoutHolder holder, int position) {
         Workout workout = workoutList.get(position);
+        if (!workout.getIsowner())
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.alternateWorkoutList));
+        else
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.workoutListColor));
+
         holder.name.setText(workout.getName());
         holder.user.setText(workout.getUsername());
         holder.date.setText(workout.getDate());
         holder.location.setText(workout.getLocation());
         holder.stars.setText(workout.getAppraisal().toString());
-        holder.owner.setText(workout.getOwner());
     }
 
     @Override

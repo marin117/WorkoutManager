@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.workoutmanager.Adapters.ExerciseAdapter;
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.User;
+import com.workoutmanager.Models.UserDetails;
 import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.DataHandler;
@@ -24,6 +26,7 @@ import com.workoutmanager.ViewModel.MainViewModel;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,6 +40,7 @@ public class UserFragment extends Fragment implements DataHandler {
     private TextView email;
     private MainViewModel mainViewModel;
     private RetrofitClient retrofit;
+    private CircleImageView userPhoto;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class UserFragment extends Fragment implements DataHandler {
         mRecyclerView.setLayoutManager(mLayoutManager);
         username = view.findViewById(R.id.username);
         email = view.findViewById(R.id.email);
+        userPhoto = view.findViewById(R.id.user_photo);
 
         retrofit = new RetrofitClient();
 
@@ -68,35 +73,25 @@ public class UserFragment extends Fragment implements DataHandler {
         mainViewModel.getUserId().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String userId) {
-                Call<User> userInfo = retrofit.createClient().getUserInfo(userId);
-                userInfo.enqueue(new Callback<User>() {
+                Call<UserDetails> userInfo = retrofit.createClient().getUserInfo(userId);
+                userInfo.enqueue(new Callback<UserDetails>() {
                     @Override
-                    public void onResponse(@NonNull Call<User> call,@NonNull Response<User> response) {
-                        username.setText(response.body().getUsername());
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<User> call,@NonNull Throwable t) {
-
-                    }
-                });
-
-                Call<List<Workout>> userWorkout = retrofit.createClient().myWorkoutList(userId);
-                userWorkout.enqueue(new Callback<List<Workout>>() {
-                    @Override
-                    public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
-                        mAdapter = new WorkoutAdapter(response.body(), mainViewModel);
+                    public void onResponse(@NonNull Call<UserDetails> call,@NonNull Response<UserDetails> response) {
+                        username.setText(response.body().getUser().getUsername());
+                        Picasso.get().load(response.body().getUser().
+                                getPicture()).
+                                resize(300, 300).
+                                centerCrop().
+                                into(userPhoto);
+                        mAdapter = new WorkoutAdapter(response.body().getWorkouts(), mainViewModel,getContext());
                         mRecyclerView.setAdapter(mAdapter);
                     }
 
                     @Override
-                    public void onFailure(Call<List<Workout>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<UserDetails> call,@NonNull Throwable t) {
 
                     }
                 });
-
-
 
             }
         });

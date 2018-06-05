@@ -6,7 +6,7 @@
     android:focusable="true"
     android:orientation="vertical"
     android:padding="10dp"
-    android:layout_margin="15dp"
+    android:layout_margin="5dp"
     android:background="@color/workoutListColor">
 
     <TextView

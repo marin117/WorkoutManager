@@ -112,13 +112,13 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
                     @Override
                     public void onResponse(@NonNull Call<Routine> call, @NonNull Response<Routine> response){
                         text_name.setText(response.body().getName());
-                        text_owner.setText(getString(R.string.detail_owner, owner));
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
                         if (!response.body().getIsmy()){
                             addItem.setVisible(true);
                         }
                         currentRoutine = response.body();
+                        text_owner.setText(owner);
                         mainViewModel.setUserId(response.body().getUserId());
                     }
 

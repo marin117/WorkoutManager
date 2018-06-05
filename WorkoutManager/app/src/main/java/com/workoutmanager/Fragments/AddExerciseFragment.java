@@ -78,7 +78,6 @@ public class AddExerciseFragment extends Fragment {
                         });
             }
         });
-
     }
 
     @Nullable

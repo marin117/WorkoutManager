@@ -11,8 +11,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -39,12 +42,14 @@ public class MainFragment extends Fragment implements DataHandler {
     private SwipeRefreshLayout swipeRefresh;
     private MainViewModel mainViewModel;
     private MenuInterface menuInterface;
+    private String filter = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainViewModel = ViewModelProviders.of(getActivity()).
                 get(MainViewModel.class);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -98,13 +103,13 @@ public class MainFragment extends Fragment implements DataHandler {
     @Override
     public void getData() {
         RetrofitClient retrofit = new RetrofitClient();
-        Call<List<Workout>> call = retrofit.createClient().workoutList();
+        Call<List<Workout>> call = retrofit.createClient().workoutList(filter);
 
         call.enqueue(new Callback<List<Workout>>() {
             @Override
             public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
 
-                mAdapter = new WorkoutAdapter(response.body(), mainViewModel);
+                mAdapter = new WorkoutAdapter(response.body(), mainViewModel, getContext());
                 mRecyclerView.setAdapter(mAdapter);
                 if (swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(false);
 
@@ -123,4 +128,24 @@ public class MainFragment extends Fragment implements DataHandler {
         getData();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search_menu, menu);
+
+        final SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter = query;
+                getData();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
 }

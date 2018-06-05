@@ -5,6 +5,7 @@ import com.workoutmanager.Models.GoogleToken;
 import com.workoutmanager.Models.IdModel;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.User;
+import com.workoutmanager.Models.UserDetails;
 import com.workoutmanager.Models.Workout;
 
 import java.util.List;
@@ -22,8 +23,7 @@ import retrofit2.http.Query;
 public interface RestInterface {
 
     @GET("/")
-    Call<List<Workout>> workoutList(
-    );
+    Call<List<Workout>> workoutList(@Query("filter") String filter);
 
     @GET("/routine/")
     Call<Routine> routineDetails(@Query("id") Integer id, @Query("user_id") String idModel);
@@ -43,6 +43,6 @@ public interface RestInterface {
     Call<List<Workout>> myWorkoutList(@Path("userId") String userId);
 
     @GET("/user/")
-    Call<User> getUserInfo(@Query("userId") String userId);
+    Call<UserDetails> getUserInfo(@Query("userId") String userId);
 
 }

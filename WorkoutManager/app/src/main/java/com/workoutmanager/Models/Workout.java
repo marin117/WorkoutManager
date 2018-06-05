@@ -26,6 +26,9 @@ public class Workout {
     @SerializedName("appraisal")
     @Expose
     private Integer appraisal;
+    @SerializedName("isowner")
+    @Expose
+    private Boolean isOwner;
 
     public Integer getRoutineId() {
         return routineId;
@@ -81,6 +84,14 @@ public class Workout {
 
     public void setAppraisal(Integer appraisal) {
         this.appraisal = appraisal;
+    }
+
+    public Boolean getIsowner() {
+        return isOwner;
+    }
+
+    public void setIsowner(Boolean isOwner) {
+        this.isOwner = isOwner;
     }
 
 }
