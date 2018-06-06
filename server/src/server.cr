@@ -11,21 +11,29 @@ get "/" do |e|
   if (filter == nil)
     STDOUT.puts filter
     response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
-from (select routine_id, r.name, username,owner, location, date, r.appraisal,
+from (select workout.routine_id, r.name, username,owner, location, date, cnt.used,
+case when likes.count is null then 0 else likes.count end as appraisal,
 case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
-join person on person.id = workout.user_id order by date desc) as t", &.read(JSON::Any)
+join person on person.id = workout.user_id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
+as cnt on cnt.routine_id = r.id
+left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
+order by date desc) t;
+", &.read(JSON::Any)
   else
     filter = "%#{filter}%"
     STDOUT.puts filter
     response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
-from (select workout.routine_id, r.name, username,owner, location, date, r.appraisal,
+from (select workout.routine_id, r.name, username,owner, location, date, r.appraisal, cnt.used,
+case when likes.count is null then 0 else likes.count end as appraisal,
 case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r
 on r.id = workout.routine_id join (select distinct(id) from routine join routine_type on routine.id = routine_id
 join routine_exercise on id = routine_exercise.routine_id
 where (lower(routine.name) like lower($1) or lower(type_name) like lower($1) or lower(exercise_name) like lower($1))
-) as rt on r.id = rt.id
+) as rt on r.id = rt.id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
+as cnt on cnt.routine_id = r.id
+left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
 join person on person.id = workout.user_id order by date desc) t;", filter, &.read(JSON::Any)
   end
   STDOUT.puts response.to_json
@@ -69,13 +77,16 @@ get "/routine/" do |e|
   id = e.params.query["id"]
   user_id = e.params.query["user_id"]
   routine = db.query_one "select row_to_json(res) from (select id, x.user_id, x.name, array_to_json(array_agg(row_to_json(t))) as exercise, comment, appraisal, case when
-c.user_id = b.user_id then true else false end as isMy
+c.user_id = b.user_id then true else false end as isMy, cnt.used,
+case when likes.count is null then 0 else likes.count end as appraisal
 from (select routine_id, exercise_name, sets, reps from routine_exercise
 where routine_id = $2) t join (select id,name, user_id,comment, appraisal from routine) x on x.id = t.routine_id left join
 (select * from workout where user_id =$1) b on b.routine_id  = x.id left join
-(select * from workout where routine_id = $2 and user_id =$1)
-c on c.routine_id = x.id
-group by x.user_id,comment, appraisal, x.name, x.id, b.user_id, c.user_id) res;;", user_id, id, &.read(JSON::Any)
+(select * from workout where routine_id = $2 and user_id = $1)
+c on c.routine_id = x.id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
+as cnt on cnt.routine_id = x.id
+left join (select routine_id, count(routine_id) from likes group by routine_id) likes on x.id = likes.routine_id
+group by x.user_id,comment, appraisal, x.name, x.id, b.user_id, c.user_id, cnt.used, likes.count) res", user_id, id, &.read(JSON::Any)
   routine.to_json
 end
 

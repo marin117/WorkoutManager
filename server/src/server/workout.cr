@@ -8,7 +8,8 @@ class Workout
     username:   String,
     location:   String,
     date:       Time,
-    appraisal:  Int32,
+    appraisal:  Int64,
     isowner:    Bool,
+    used:       Int64,
   })
 end

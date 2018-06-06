@@ -31,4 +31,8 @@ CREATE TABLE workout (
     date timestamp with time zone
 );
 
+create table likes(
+    user_id text references person(id), 
+    routine_id bigint references routine(id))
+);
 

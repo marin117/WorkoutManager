@@ -35,6 +35,9 @@ public class Routine {
     @SerializedName("ismy")
     @Expose
     private Boolean isMy;
+    @SerializedName("used")
+    @Expose
+    private Integer used;
 
 
     public Routine(){
@@ -46,6 +49,8 @@ public class Routine {
         this.comment="";
         this.types = new ArrayList<>();
         this.isMy = true;
+        this.used = 0;
+
     }
 
     public Routine(String user_id, String name, ArrayList<String> types){
@@ -57,6 +62,7 @@ public class Routine {
         this.appraisal = 0;
         this.comment="";
         this.isMy = true;
+        this.used = 0;
 
 
     }
@@ -127,5 +133,13 @@ public class Routine {
     }
     public void setIsmy(Boolean ismy) {
         this.isMy = ismy;
+    }
+
+    public Integer getUsed() {
+        return used;
+    }
+
+    public void setUsed(Integer used) {
+        this.used = used;
     }
 }

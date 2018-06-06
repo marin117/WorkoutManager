@@ -4,6 +4,7 @@ import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
@@ -107,7 +109,7 @@ public class MainFragment extends Fragment implements DataHandler {
 
         call.enqueue(new Callback<List<Workout>>() {
             @Override
-            public void onResponse(Call<List<Workout>> call, Response<List<Workout>> response) {
+            public void onResponse(@NonNull Call<List<Workout>> call,@NonNull Response<List<Workout>> response) {
 
                 mAdapter = new WorkoutAdapter(response.body(), mainViewModel, getContext());
                 mRecyclerView.setAdapter(mAdapter);
@@ -116,8 +118,9 @@ public class MainFragment extends Fragment implements DataHandler {
             }
 
             @Override
-            public void onFailure(Call<List<Workout>> call, Throwable t) {
-                Log.e("TAG", t.getMessage());
+            public void onFailure(@NonNull Call<List<Workout>> call,@NonNull Throwable t) {
+                if (swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(false);
+                Toast.makeText(getContext(),"No results", Toast.LENGTH_SHORT).show();
             }
         });
     }
