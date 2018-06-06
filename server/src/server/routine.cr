@@ -12,5 +12,6 @@ class Routine
     types:     Array(String),
     ismy:      Bool,
     used:      Int32,
+    isliked:   Bool,
   })
 end

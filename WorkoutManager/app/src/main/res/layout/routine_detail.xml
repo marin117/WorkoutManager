@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@color/detailInfoColor"
         android:id="@+id/detail_layout"
         >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/routine_info">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,26 +35,43 @@
             android:textSize="15sp"
             android:textColor="@color/textColor"
             />
+        </RelativeLayout>
 
-        <TextView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id ="@+id/action_container"
+        android:layout_below="@+id/routine_info">
+
+        <com.like.LikeButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/detail_name"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="5dp"
-            android:layout_marginEnd="15dp"
-            android:id="@+id/detail_stars"
-            android:textSize="15sp"
-            android:textColor="@color/textColor"
+            app:icon_type="heart"
+            app:icon_size="25dp"
+            android:id="@+id/routine_like"
+            android:layout_alignParentStart= "true"
+            android:layout_marginStart="5dp"
+
             />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/routine_like"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="5dp"
+                android:id="@+id/like_number"
+                />
+        </RelativeLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/detail_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:scrollbars="vertical"
-            android:layout_below="@id/detail_name"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/action_container"
             android:layout_marginTop="30dp"
             android:background="@color/backgroundColor"
             />

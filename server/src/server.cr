@@ -63,10 +63,14 @@ get "/user/" do |e|
   user_query = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
   user = User.from_json(user_query.to_json)
   workout_query = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
-from (select routine_id, r.name, username,owner, location, date, r.appraisal,
+from (select workout.routine_id, r.name, username,owner, location, date, cnt.used,
+case when likes.count is null then 0 else likes.count end as appraisal,
 case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
 join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
-join person on person.id = workout.user_id where person.id = $1 order by date desc) as t", user_id, &.read(JSON::Any)
+join person on person.id = workout.user_id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
+as cnt on cnt.routine_id = r.id
+left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
+where person.id = $1 order by date desc) t", user_id, &.read(JSON::Any)
   workout = Array(Workout).from_json(workout_query.to_json)
   response = UserDetails.new(user, workout)
   STDOUT.puts response.to_json
@@ -76,9 +80,10 @@ end
 get "/routine/" do |e|
   id = e.params.query["id"]
   user_id = e.params.query["user_id"]
-  routine = db.query_one "select row_to_json(res) from (select id, x.user_id, x.name, array_to_json(array_agg(row_to_json(t))) as exercise, comment, appraisal, case when
+  routine = db.query_one "select row_to_json(res) from (select id, x.user_id, x.name, array_to_json(array_agg(row_to_json(t))) as exercise, comment, case when
 c.user_id = b.user_id then true else false end as isMy, cnt.used,
-case when likes.count is null then 0 else likes.count end as appraisal
+case when likes.count is null then 0 else likes.count end as appraisal,
+case when lk.routine_id is null then false else true end as isliked
 from (select routine_id, exercise_name, sets, reps from routine_exercise
 where routine_id = $2) t join (select id,name, user_id,comment, appraisal from routine) x on x.id = t.routine_id left join
 (select * from workout where user_id =$1) b on b.routine_id  = x.id left join
@@ -86,7 +91,9 @@ where routine_id = $2) t join (select id,name, user_id,comment, appraisal from r
 c on c.routine_id = x.id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
 as cnt on cnt.routine_id = x.id
 left join (select routine_id, count(routine_id) from likes group by routine_id) likes on x.id = likes.routine_id
-group by x.user_id,comment, appraisal, x.name, x.id, b.user_id, c.user_id, cnt.used, likes.count) res", user_id, id, &.read(JSON::Any)
+left join (select * from likes where user_id = $1 and routine_id = $2 ) as lk
+on lk.routine_id = x.id
+group by x.user_id,comment, appraisal, x.name, x.id, b.user_id, c.user_id, cnt.used, likes.count, lk.routine_id) res;", user_id, id, &.read(JSON::Any)
   routine.to_json
 end
 
@@ -119,6 +126,17 @@ post "/routine/" do |e|
   STDOUT.puts time
 end
 
+patch "/routine/" do |e|
+  routine = Routine.from_json(e.params.json["routine"].to_json)
+  db.exec "insert into likes (user_id, routine_id) values ($1, $2)", routine.user_id, routine.id
+end
+
+delete "/routine/" do |e|
+  user_id = e.params.query["userId"].to_s
+  routine_id = e.params.query["routineId"].to_i32
+  db.exec "delete from likes where user_id = $1  and routine_id = $2", user_id, routine_id
+end
+
 post "/token/" do |e|
   url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + e.params.json["tokenId"].to_s
   response = HTTP::Client.get url
@@ -127,8 +145,9 @@ post "/token/" do |e|
   sub = google_resp["sub"].to_s
   name = google_resp["name"].to_s
   email = google_resp["email"].to_s
+  picture = google_resp["picture"].to_s
   begin
-    db.exec("insert into person(id, username, email) values ($1, $2, $3)", sub, name, email)
+    db.exec("insert into person(id, username, email, picture) values ($1, $2, $3, $4)", sub, name, email, picture)
   rescue e : Exception
     STDOUT.puts e
   end

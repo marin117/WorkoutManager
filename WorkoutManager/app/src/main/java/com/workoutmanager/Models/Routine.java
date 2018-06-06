@@ -38,6 +38,9 @@ public class Routine {
     @SerializedName("used")
     @Expose
     private Integer used;
+    @SerializedName("isliked")
+    @Expose
+    private Boolean isliked;
 
 
     public Routine(){
@@ -50,6 +53,7 @@ public class Routine {
         this.types = new ArrayList<>();
         this.isMy = true;
         this.used = 0;
+        this.isliked = false;
 
     }
 
@@ -63,6 +67,7 @@ public class Routine {
         this.comment="";
         this.isMy = true;
         this.used = 0;
+        this.isliked = false;
 
 
     }
@@ -141,5 +146,13 @@ public class Routine {
 
     public void setUsed(Integer used) {
         this.used = used;
+    }
+
+    public Boolean getIsliked() {
+        return isliked;
+    }
+
+    public void setIsliked(Boolean isliked) {
+        this.isliked = isliked;
     }
 }
