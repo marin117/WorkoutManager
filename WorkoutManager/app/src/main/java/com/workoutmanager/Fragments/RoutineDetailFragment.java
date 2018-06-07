@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.internal.Objects;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.workoutmanager.Adapters.ExerciseAdapter;
@@ -41,7 +40,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private TextView text_owner;
+    private TextView textOwner;
     private TextView textName;
     private TextView text_stars;
     private MainViewModel mainViewModel;
@@ -60,7 +59,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        text_owner = view.findViewById(R.id.detail_user);
+        textOwner = view.findViewById(R.id.detail_user);
         textName = view.findViewById(R.id.detail_name);
         addItem = view.findViewById(R.id.new_routine);
         likeButton = view.findViewById(R.id.routine_like);
@@ -72,7 +71,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         retrofit = new RetrofitClient();
         userId = new IdModel(getActivity()).getId();
 
-        text_owner.setOnClickListener(new View.OnClickListener() {
+        textOwner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -127,13 +126,15 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
                     @Override
                     public void onResponse(@NonNull Call<Routine> call, @NonNull Response<Routine> response){
                         textName.setText(response.body().getName());
+                        textName.setVisibility(View.VISIBLE);
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
                         if (!response.body().getIsmy()){
                             addItem.setVisible(true);
                         }
                         currentRoutine = response.body();
-                        text_owner.setText(owner);
+                        textOwner.setText(owner);
+                        textOwner.setVisibility(View.VISIBLE);
                         mainViewModel.setUserId(response.body().getUserId());
                         likeButton.setVisibility(View.VISIBLE);
                         likeNumber.setText(response.body().getAppraisal().toString());

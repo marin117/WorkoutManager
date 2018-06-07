@@ -17,4 +17,5 @@
     <string name="no_connection">No connection to server.</string>
     <string name="new_element">New element</string>
     <string name="confirm">Confirm</string>
+    <string name="user_point">User point</string>
 </resources>

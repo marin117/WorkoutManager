@@ -13,26 +13,22 @@
         android:id="@+id/workout_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        android:drawablePadding="3dp"
+        android:drawableStart="@drawable/weightlifting"
         android:textStyle="bold"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+       />
+
 
     <TextView
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textSize="15dp"
-        android:text = "user"
-        android:layout_below="@+id/workout_name" />
-
-    <TextView
-        android:id="@+id/owner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textSize="15dp"
-        android:text = "user"
+        android:textSize="15sp"
+        android:layout_alignParentStart="true"
+        android:drawableStart="@drawable/person_image"
         android:layout_below="@+id/workout_name" />
     <TextView
         android:id="@+id/date"

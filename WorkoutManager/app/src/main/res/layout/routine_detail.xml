@@ -22,6 +22,9 @@
             android:layout_margin="5dp"
             android:textSize="30sp"
             android:textColor="@color/textColor"
+            android:drawablePadding="3dp"
+            android:drawableStart="@drawable/weightlifting"
+            android:visibility="invisible"
             />
 
         <TextView
@@ -34,7 +37,11 @@
             android:layout_margin="5dp"
             android:textSize="15sp"
             android:textColor="@color/textColor"
+            android:drawableStart="@drawable/person_image"
+            android:visibility="invisible"
             />
+
+
         </RelativeLayout>
 
     <RelativeLayout
