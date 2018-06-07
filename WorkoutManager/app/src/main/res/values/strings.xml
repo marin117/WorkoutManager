@@ -18,4 +18,6 @@
     <string name="new_element">New element</string>
     <string name="confirm">Confirm</string>
     <string name="user_point">User point</string>
+    <string name="username">username</string>
+    <string name="picture">picture</string>
 </resources>

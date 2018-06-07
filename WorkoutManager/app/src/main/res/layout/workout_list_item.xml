@@ -9,16 +9,50 @@
     android:layout_margin="5dp"
     android:background="@color/workoutListColor">
 
-    <TextView
-        android:id="@+id/workout_name"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:drawablePadding="3dp"
-        android:drawableStart="@drawable/weightlifting"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
-       />
+        android:id="@+id/workout_info_content"
+        android:weightSum="3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/workout_name"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:drawablePadding="@dimen/drawable_padding"
+            android:drawableStart="@drawable/weightlifting"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/stars"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="12sp"
+            android:drawableStart="@drawable/heart"
+            android:drawablePadding="@dimen/drawable_padding"/>
+
+        <TextView
+            android:layout_weight="0.5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/replay_workout"
+            android:drawableStart="@drawable/replay"
+            android:drawablePadding="@dimen/drawable_padding"
+            />
+    </LinearLayout>
 
 
     <TextView
@@ -29,36 +63,27 @@
         android:textSize="15sp"
         android:layout_alignParentStart="true"
         android:drawableStart="@drawable/person_image"
-        android:layout_below="@+id/workout_name" />
+        android:layout_below="@+id/workout_info_content" />
+
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textSize="10dp"
+        android:layout_alignParentStart="true"
+        android:textSize="12sp"
         android:layout_below="@+id/user"
         android:layout_marginTop="10dp"
-        android:text = "dlgksgj"
+
         />
 
     <TextView
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10dp"
+        android:textSize="12sp"
         android:layout_below="@+id/user"
         android:layout_marginTop="10dp"
-        android:layout_centerInParent="true"
-        android:text ="test"/>
+        android:layout_centerInParent="true" />
 
-    <TextView
-        android:id="@+id/stars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:layout_below="@+id/user"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentRight="true"
-        android:text ="test"/>
 
 </RelativeLayout>

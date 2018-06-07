@@ -146,12 +146,13 @@ post "/token/" do |e|
   name = google_resp["name"].to_s
   email = google_resp["email"].to_s
   picture = google_resp["picture"].to_s
+  user = User.new(sub, name, email, picture)
   begin
     db.exec("insert into person(id, username, email, picture) values ($1, $2, $3, $4)", sub, name, email, picture)
   rescue e : Exception
     STDOUT.puts e
   end
-  sub
+  user.to_json
 end
 
 Kemal.run

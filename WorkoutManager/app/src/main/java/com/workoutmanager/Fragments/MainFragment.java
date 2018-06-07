@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.workoutmanager.Adapters.WorkoutAdapter;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.Routine;
@@ -28,10 +30,12 @@ import com.workoutmanager.Models.Workout;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.DataHandler;
 import com.workoutmanager.Utils.MenuInterface;
+import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.MainViewModel;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,6 +76,7 @@ public class MainFragment extends Fragment implements DataHandler {
         FloatingActionButton fab = getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
         menuInterface.unlockDrawer();
+        menuInterface.setHeader();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

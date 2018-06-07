@@ -22,7 +22,7 @@
             android:layout_margin="5dp"
             android:textSize="30sp"
             android:textColor="@color/textColor"
-            android:drawablePadding="3dp"
+            android:drawablePadding="@dimen/drawable_padding"
             android:drawableStart="@drawable/weightlifting"
             android:visibility="invisible"
             />

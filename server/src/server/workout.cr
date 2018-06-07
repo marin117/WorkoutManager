@@ -7,7 +7,7 @@ class Workout
     owner:      String,
     username:   String,
     location:   String,
-    date:       Time,
+    date:       String,
     appraisal:  Int64,
     isowner:    Bool,
     used:       Int64,

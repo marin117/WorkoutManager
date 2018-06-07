@@ -182,6 +182,9 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         like.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull  Call<String> call,@NonNull Response<String> response){
+                currentRoutine.setAppraisal(currentRoutine.getAppraisal() + 1);
+                likeNumber.setText(currentRoutine.getAppraisal().toString());
+
 
             }
 
@@ -199,6 +202,9 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         like.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull  Call<String> call,@NonNull Response<String> response){
+                currentRoutine.setAppraisal(currentRoutine.getAppraisal() - 1);
+                likeNumber.setText(currentRoutine.getAppraisal().toString());
+
 
             }
 
@@ -214,8 +220,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         addItem = menu.findItem(R.id.new_routine);
-        addItem.setVisible(false);
-
+        //addItem.setVisible(false);
     }
 
     @Override

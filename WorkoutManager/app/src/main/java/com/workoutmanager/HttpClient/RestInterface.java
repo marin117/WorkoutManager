@@ -36,7 +36,7 @@ public interface RestInterface {
 
     @POST("/token/")
     @Headers("Content-Type: application/json")
-    Call<String> sendToken(@Body GoogleToken tokenId);
+    Call<User> sendToken(@Body GoogleToken tokenId);
 
     @PUT("/routine/")
     Call<String> addWorkout(@Body AddRoutineModel routine);

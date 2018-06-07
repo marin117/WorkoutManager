@@ -28,7 +28,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
 
     public class WorkoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
-        public TextView name, user, date, location, stars;
+        public TextView name, user, date, location, stars, reuse;
         WorkoutHolder(View view) {
             super(view);
             name = view.findViewById(R.id.workout_name);
@@ -36,6 +36,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
             date = view.findViewById(R.id.date);
             location = view.findViewById(R.id.location);
             stars = view.findViewById(R.id.stars);
+            reuse = view.findViewById(R.id.replay_workout);
             view.setOnClickListener(this);
 
         }
@@ -87,6 +88,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         holder.date.setText(workout.getDate());
         holder.location.setText(workout.getLocation());
         holder.stars.setText(workout.getAppraisal().toString());
+        holder.reuse.setText(workout.getUsed().toString());
     }
 
     @Override

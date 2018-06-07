@@ -22,6 +22,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.workoutmanager.HttpClient.RetrofitClient;
 import com.workoutmanager.Models.GoogleToken;
+import com.workoutmanager.Models.User;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
 import com.workoutmanager.Utils.MenuInterface;
@@ -141,17 +142,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     private void sendToken(String tokenID) {
         RetrofitClient retrofit = new RetrofitClient();
         GoogleToken token = new GoogleToken(tokenID);
-        Call<String> call = retrofit.createClient().sendToken(token);
-        call.enqueue(new Callback<String>() {
+        Call<User> call = retrofit.createClient().sendToken(token);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<String> call,@NonNull Response<String> response) {
-                Log.d("TAAAAAAG", response.body());
-                sharedPreferencesUtil.writeData(getString(R.string.id), response.body());
+            public void onResponse(@NonNull Call<User> call,@NonNull Response<User> response) {
+                //Log.d("TAAAAAAG", response.body());
+                sharedPreferencesUtil.writeData(getString(R.string.id), response.body().getId());
+                sharedPreferencesUtil.writeData(getString(R.string.username), response.body().getUsername());
+                sharedPreferencesUtil.writeData(getString(R.string.picture), response.body().getPicture());
                 mainFragmentChange();
             }
 
             @Override
-            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
+            public void onFailure(@NonNull Call<User> call,@NonNull Throwable t) {
                 mGoogleSignInClient.signOut();
                 Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
 

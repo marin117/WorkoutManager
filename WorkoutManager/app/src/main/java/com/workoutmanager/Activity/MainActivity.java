@@ -11,10 +11,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Picasso;
 import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.Fragments.UserFragment;
@@ -23,6 +29,8 @@ import com.workoutmanager.Utils.GoogleAccount;
 import com.workoutmanager.Utils.MenuInterface;
 import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.MainViewModel;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements MenuInterface {
 
@@ -46,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         navigationView = findViewById(R.id.nav_view);
         sharedPreferencesUtil = new SharedPreferencesUtil(this);
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         changeFragments(new LoginFragment(), true);
 
 
@@ -122,6 +130,27 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
                     commit();
         }
 
+    }
+
+    @Override
+    public void setHeader() {
+        View headerLayout = navigationView.getHeaderView(0);
+        CircleImageView profilePicture = headerLayout.findViewById(R.id.picture_nav);
+        String picture = sharedPreferencesUtil.readData(getString(R.string.picture));
+        Picasso.get().load(picture).
+                resize(300, 300).
+                centerCrop().
+                into(profilePicture);
+        TextView username = headerLayout.findViewById(R.id.username_header);
+        username.setText(sharedPreferencesUtil.readData(getString(R.string.username)));
+
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainViewModel.setUserId(sharedPreferencesUtil.readData(getString(R.string.id)));
+                changeFragments(new UserFragment(), false);
+            }
+        });
     }
 
     @Override
