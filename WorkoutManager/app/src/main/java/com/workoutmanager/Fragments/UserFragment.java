@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +33,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.workoutmanager.Utils.PictureUtils.loadPicture;
+
 public class UserFragment extends Fragment implements DataHandler {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView username;
-    private TextView email;
+    private TextView types;
+    private TextView exercises;
     private MainViewModel mainViewModel;
     private RetrofitClient retrofit;
     private CircleImageView userPhoto;
@@ -60,7 +65,8 @@ public class UserFragment extends Fragment implements DataHandler {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         username = view.findViewById(R.id.username);
-        email = view.findViewById(R.id.email);
+        types = view.findViewById(R.id.fav_types);
+        exercises = view.findViewById(R.id.fav_exercises);
         userPhoto = view.findViewById(R.id.user_photo);
 
         retrofit = new RetrofitClient();
@@ -78,13 +84,11 @@ public class UserFragment extends Fragment implements DataHandler {
                     @Override
                     public void onResponse(@NonNull Call<UserDetails> call,@NonNull Response<UserDetails> response) {
                         username.setText(response.body().getUser().getUsername());
-                        Picasso.get().load(response.body().getUser().
-                                getPicture()).
-                                resize(300, 300).
-                                centerCrop().
-                                into(userPhoto);
+                        loadPicture(response.body().getUser().getPicture(), 300, 300, userPhoto);
                         mAdapter = new WorkoutAdapter(response.body().getWorkouts(), mainViewModel,getContext());
                         mRecyclerView.setAdapter(mAdapter);
+                        types.setText(TextUtils.join(", ", response.body().getType()));
+                        exercises.setText(TextUtils.join(", ", response.body().getExercise()));
                     }
 
                     @Override

@@ -59,6 +59,8 @@ end
 get "/user/" do |e|
   user_id = e.params.query["userId"]
   STDOUT.puts user_id
+  fav_exercises = Array(String).new
+  fav_types = Array(String).new
   response = ""
   user_query = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
   user = User.from_json(user_query.to_json)
@@ -71,8 +73,25 @@ join person on person.id = workout.user_id join (select routine_id, count(routin
 as cnt on cnt.routine_id = r.id
 left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
 where person.id = $1 order by workout.date desc) t", user_id, &.read(JSON::Any)
+  exercise_query = db.query "select exercise_name, count(exercise_name) from (select w.routine_id, exercise_name from workout as w join (select routine_id, exercise_name from routine_exercise) as x
+on w.routine_id = x.routine_id group by w.routine_id, exercise_name, w.user_id
+having w.user_id = $1) res group by exercise_name order by count desc limit 3;", user_id do |rs|
+    rs.each do
+      fav_exercises.push(rs.read(String))
+      STDOUT.puts rs.read(Int64)
+    end
+  end
+  type_query = db.query "select type_name, count(type_name) from (select w.routine_id, type_name from workout as w join (select routine_id, type_name from routine_type) as x
+on w.routine_id = x.routine_id
+group by w.routine_id, type_name, w.user_id
+having w.user_id = $1) res group by type_name order by count desc limit 3;", user_id do |rs|
+    rs.each do
+      fav_types.push(rs.read(String))
+      STDOUT.puts rs.read(Int64)
+    end
+  end
   workout = Array(Workout).from_json(workout_query.to_json)
-  response = UserDetails.new(user, workout)
+  response = UserDetails.new(user, workout, fav_types, fav_exercises)
   STDOUT.puts response.to_json
   response.to_json
 end

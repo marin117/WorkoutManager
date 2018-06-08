@@ -1,42 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <RelativeLayout
+    android:layout_height="match_parent">
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/user_photo"
-            app:civ_border_width="4dp"
-            android:padding="5dp"
-            app:civ_border_color="@color/white"/>
-
-        <TextView
-            android:layout_below="@+id/user_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id = "@+id/username"
-            android:padding="5dp"
-            android:textSize="25sp"
-            android:textColor="#000000"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/email"
-            android:layout_below="@+id/username"/>
-
-        <android.support.v7.widget.RecyclerView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/user_workout"
-            android:layout_below="@+id/username"
-            android:paddingTop="20dp">
-        </android.support.v7.widget.RecyclerView>
-    </RelativeLayout>
+            android:descendantFocusability="blocksDescendants">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="4dp" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_photo"
+                android:padding="5dp"
+                android:textColor="#000000"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/fav_types"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/user_photo"
+                android:drawableStart="@drawable/weightlifting"
+                android:drawablePadding="@dimen/drawable_padding"/>
+
+            <TextView
+                android:id="@+id/fav_exercises"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/user_photo"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_below="@+id/fav_types"
+                android:drawableStart="@drawable/dumbell"
+                android:drawablePadding="@dimen/drawable_padding"
+
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/user_workout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/username"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="20dp" />
+        </RelativeLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

@@ -16,6 +16,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +44,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView textOwner;
     private TextView textName;
-    private TextView text_stars;
+    private TextView reuseNumber;
     private MainViewModel mainViewModel;
     private MenuItem addItem;
     private String userId;
@@ -50,6 +52,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
     private Routine currentRoutine;
     private LikeButton likeButton;
     private TextView likeNumber;
+    private RelativeLayout actionContainer;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,8 +67,8 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
         addItem = view.findViewById(R.id.new_routine);
         likeButton = view.findViewById(R.id.routine_like);
         likeNumber = view.findViewById(R.id.like_number);
-        likeButton.setVisibility(View.INVISIBLE);
-
+        reuseNumber = view.findViewById(R.id.reuse_number);
+        actionContainer = view.findViewById(R.id.action_container);
 
 
         retrofit = new RetrofitClient();
@@ -126,7 +129,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
                     @Override
                     public void onResponse(@NonNull Call<Routine> call, @NonNull Response<Routine> response){
                         textName.setText(response.body().getName());
-                        textName.setVisibility(View.VISIBLE);
+                        actionContainer.setVisibility(View.VISIBLE);
                         mAdapter = new ExerciseAdapter(response.body().getExercise());
                         mRecyclerView.setAdapter(mAdapter);
                         if (!response.body().getIsmy()){
@@ -134,9 +137,8 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
                         }
                         currentRoutine = response.body();
                         textOwner.setText(owner);
-                        textOwner.setVisibility(View.VISIBLE);
+                        reuseNumber.setText(response.body().getUsed().toString());
                         mainViewModel.setUserId(response.body().getUserId());
-                        likeButton.setVisibility(View.VISIBLE);
                         likeNumber.setText(response.body().getAppraisal().toString());
                         if (response.body().getIsliked())
                             likeButton.setLiked(true);
@@ -144,7 +146,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
 
                     @Override
                     public void onFailure(@NonNull Call<Routine> call, @NonNull Throwable t){
-                        Toast.makeText(getContext(),
+                        Toast.makeText(getActivity(),
                                 "Failure",
                                 Toast.LENGTH_SHORT).show();
                         Log.e("TAG", t.getMessage());

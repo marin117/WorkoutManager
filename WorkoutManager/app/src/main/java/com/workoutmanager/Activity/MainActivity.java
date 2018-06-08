@@ -32,6 +32,8 @@ import com.workoutmanager.ViewModel.MainViewModel;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.workoutmanager.Utils.PictureUtils.loadPicture;
+
 public class MainActivity extends AppCompatActivity implements MenuInterface {
 
 
@@ -137,10 +139,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         View headerLayout = navigationView.getHeaderView(0);
         CircleImageView profilePicture = headerLayout.findViewById(R.id.picture_nav);
         String picture = sharedPreferencesUtil.readData(getString(R.string.picture));
-        Picasso.get().load(picture).
-                resize(300, 300).
-                centerCrop().
-                into(profilePicture);
+        loadPicture(picture, 300,300, profilePicture);
         TextView username = headerLayout.findViewById(R.id.username_header);
         username.setText(sharedPreferencesUtil.readData(getString(R.string.username)));
 

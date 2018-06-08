@@ -1,86 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <RelativeLayout
+    android:layout_height="match_parent">
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:id="@+id/detail_layout"
-        >
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id = "@+id/routine_info">
+            android:descendantFocusability="blocksDescendants">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/detail_name"
-            android:layout_margin="5dp"
-            android:textSize="30sp"
-            android:textColor="@color/textColor"
-            android:drawablePadding="@dimen/drawable_padding"
-            android:drawableStart="@drawable/weightlifting"
-            android:visibility="invisible"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_name"
-            android:id="@+id/detail_user"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_margin="5dp"
-            android:textSize="15sp"
-            android:textColor="@color/textColor"
-            android:drawableStart="@drawable/person_image"
-            android:visibility="invisible"
-            />
-
-
-        </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id ="@+id/action_container"
-        android:layout_below="@+id/routine_info">
-
-        <com.like.LikeButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:icon_type="heart"
-            app:icon_size="25dp"
-            android:id="@+id/routine_like"
-            android:layout_alignParentStart= "true"
-            android:layout_marginStart="5dp"
-
-            />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/detail_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/routine_like"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="5dp"
-                android:id="@+id/like_number"
-                />
+                android:layout_margin="5dp"
+                tools:ignore="UselessParent">
+
+                <RelativeLayout
+                    android:id="@+id/routine_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/detail_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:drawableStart="@drawable/weightlifting"
+                        android:textColor="@color/textColor"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/detail_user"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/detail_name"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:drawableStart="@drawable/person_image"
+                        android:focusable="true"
+                        android:textColor="@color/textColor"
+                        android:textSize="15sp"
+                         />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/action_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/routine_info"
+                    android:visibility="invisible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:weightSum="1">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+
+                            <com.like.LikeButton
+                                android:id="@+id/routine_like"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="5dp"
+                                app:icon_size="25dp"
+                                app:icon_type="heart"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/like_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="5dp"
+                                android:layout_toEndOf="@id/routine_like" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5">
+
+                            <TextView
+                                android:id="@+id/reuse_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_marginTop="5dp"
+                                android:drawablePadding="15dp"
+                                android:drawableStart="@drawable/replay" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/detail_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/action_container"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/backgroundColor"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:nestedScrollingEnabled="false"
+                    android:scrollbars="vertical" />
+            </RelativeLayout>
         </RelativeLayout>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/detail_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:scrollbars="vertical"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_below="@id/action_container"
-            android:layout_marginTop="30dp"
-            android:background="@color/backgroundColor"
-            />
-    </RelativeLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

@@ -94,7 +94,7 @@ public class MainFragment extends Fragment implements DataHandler {
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         swipeRefresh = view.findViewById(R.id.swipe_main);
-
+        swipeRefresh.setRefreshing(true);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
