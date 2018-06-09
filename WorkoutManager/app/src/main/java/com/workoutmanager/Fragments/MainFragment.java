@@ -125,7 +125,8 @@ public class MainFragment extends Fragment implements DataHandler {
             @Override
             public void onFailure(@NonNull Call<List<Workout>> call,@NonNull Throwable t) {
                 if (swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(false);
-                Toast.makeText(getContext(),"No results", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"No results", Toast.LENGTH_SHORT).show();
+                swipeRefresh.setEnabled(true);
             }
         });
     }

@@ -12,4 +12,16 @@ class Workout
     isowner:    Bool,
     used:       Int64,
   })
+
+  def initialize
+    @routine_id = -1i64
+    @name = ""
+    @owner = ""
+    @username = ""
+    @location = ""
+    @date = ""
+    @appraisal = -1i64
+    @isowner = false
+    @used = -1i64
+  end
 end

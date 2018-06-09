@@ -83,17 +83,27 @@ public class UserFragment extends Fragment implements DataHandler {
                 userInfo.enqueue(new Callback<UserDetails>() {
                     @Override
                     public void onResponse(@NonNull Call<UserDetails> call,@NonNull Response<UserDetails> response) {
-                        username.setText(response.body().getUser().getUsername());
-                        loadPicture(response.body().getUser().getPicture(), 300, 300, userPhoto);
-                        mAdapter = new WorkoutAdapter(response.body().getWorkouts(), mainViewModel,getContext());
-                        mRecyclerView.setAdapter(mAdapter);
-                        types.setText(TextUtils.join(", ", response.body().getType()));
-                        exercises.setText(TextUtils.join(", ", response.body().getExercise()));
+
+                        if (response.code() == 200) {
+                            username.setText(response.body().getUser().getUsername());
+                            loadPicture(response.body().getUser().getPicture(), 300, 300, userPhoto);
+                            if (response.body().getWorkouts().size() == 1 &&
+                                    response.body().getWorkouts().get(0).getRoutineId() == -1){
+                                mRecyclerView.setAdapter(null);
+
+                            }
+                            else {
+                                mAdapter = new WorkoutAdapter(response.body().getWorkouts(), mainViewModel, getContext());
+                                mRecyclerView.setAdapter(mAdapter);
+                            }
+                            types.setText(TextUtils.join(", ", response.body().getType()));
+                            exercises.setText(TextUtils.join(", ", response.body().getExercise()));
+                        }
+
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<UserDetails> call,@NonNull Throwable t) {
-
                     }
                 });
 

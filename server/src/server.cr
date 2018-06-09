@@ -5,6 +5,10 @@ require "json"
 
 db = DB.open "postgres:///WorkoutManagerDB"
 
+before_all do |e|
+  e.response.status_code = 200
+  e.response.content_type = "application/json"
+end
 get "/" do |e|
   filter = e.params.query.fetch("filter", nil)
   response = ""
@@ -36,6 +40,7 @@ as cnt on cnt.routine_id = r.id
 left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
 join person on person.id = workout.user_id order by workout.date desc) t;", filter, &.read(JSON::Any)
   end
+
   STDOUT.puts response.to_json
   response.to_json
 end
@@ -73,26 +78,22 @@ join person on person.id = workout.user_id join (select routine_id, count(routin
 as cnt on cnt.routine_id = r.id
 left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
 where person.id = $1 order by workout.date desc) t", user_id, &.read(JSON::Any)
-  exercise_query = db.query "select exercise_name, count(exercise_name) from (select w.routine_id, exercise_name from workout as w join (select routine_id, exercise_name from routine_exercise) as x
+  fav_exercises = db.query_one "select case when array_agg(exercise_name) is null then '{}' else array_agg(exercise_name) end  from (select exercise_name, count(exercise_name) from (select w.routine_id, exercise_name from workout as w join (select routine_id, exercise_name from routine_exercise) as x
 on w.routine_id = x.routine_id group by w.routine_id, exercise_name, w.user_id
-having w.user_id = $1) res group by exercise_name order by count desc limit 3;", user_id do |rs|
-    rs.each do
-      fav_exercises.push(rs.read(String))
-      STDOUT.puts rs.read(Int64)
-    end
-  end
-  type_query = db.query "select type_name, count(type_name) from (select w.routine_id, type_name from workout as w join (select routine_id, type_name from routine_type) as x
+having w.user_id = $1) res group by exercise_name order by count desc limit 3) t", user_id, &.read(Array(String))
+
+  fav_types = db.query_one "select case when array_agg(type_name) is null then '{}' else array_agg(type_name) end  from (select type_name, count(type_name) from (select w.routine_id, type_name from workout as w join (select routine_id, type_name from routine_type) as x
 on w.routine_id = x.routine_id
 group by w.routine_id, type_name, w.user_id
-having w.user_id = $1) res group by type_name order by count desc limit 3;", user_id do |rs|
-    rs.each do
-      fav_types.push(rs.read(String))
-      STDOUT.puts rs.read(Int64)
-    end
+having w.user_id = $1) res group by type_name order by count desc limit 3) t;", user_id, &.read(Array(String))
+  begin
+    workout = Array(Workout).from_json(workout_query.to_json)
+  rescue ex
+    workout = Array(Workout).new.push(Workout.new)
   end
-  workout = Array(Workout).from_json(workout_query.to_json)
   response = UserDetails.new(user, workout, fav_types, fav_exercises)
   STDOUT.puts response.to_json
+  STDOUT.puts e.response.status_code
   response.to_json
 end
 
