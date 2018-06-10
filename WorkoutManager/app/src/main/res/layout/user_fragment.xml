@@ -20,31 +20,68 @@
                 android:padding="5dp"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="4dp" />
-
-            <TextView
-                android:id="@+id/username"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/user_photo"
-                android:padding="5dp"
-                android:textColor="#000000"
-                android:textSize="25sp" />
+                android:layout_toEndOf="@+id/user_photo"
+                android:id = "@+id/user_action"
+                android:visibility="invisible"
+                >
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textColor="#000000"
+                    android:textSize="25sp" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/username"
+                    >
+                    <com.like.LikeButton
+                        android:id="@+id/user_star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        app:icon_size="30dp"
+                        app:icon_type="star"
 
+
+                        />
+
+                    <TextView
+                        android:id="@+id/star_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_toEndOf="@+id/user_star"
+                        android:layout_centerInParent="true"
+                        android:textColor="#000000"
+                        />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id = "@+id/user_info"
+                android:layout_below="@id/user_photo"
+                android:visibility="invisible">
             <TextView
                 android:id="@+id/fav_types"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
-                android:layout_toEndOf="@+id/user_photo"
                 android:drawableStart="@drawable/weightlifting"
-                android:drawablePadding="@dimen/drawable_padding"/>
+                android:drawablePadding="@dimen/drawable_padding"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/fav_exercises"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/user_photo"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/fav_types"
@@ -52,12 +89,13 @@
                 android:drawablePadding="@dimen/drawable_padding"
 
                 />
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/user_workout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/username"
+                android:layout_below="@+id/user_info"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:nestedScrollingEnabled="false"

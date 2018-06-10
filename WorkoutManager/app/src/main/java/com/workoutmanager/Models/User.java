@@ -17,6 +17,15 @@ public class User {
     @SerializedName("picture")
     @Expose
     private String picture;
+    @SerializedName("pushyid")
+    @Expose
+    private String pushyid;
+    @SerializedName("stars")
+    @Expose
+    private Integer stars;
+    @SerializedName("isstar")
+    @Expose
+    private Boolean isstar;
 
     public String getId() {
         return id;
@@ -50,5 +59,28 @@ public class User {
         this.picture = picture;
     }
 
+    public String getPushyid() {
+        return pushyid;
+    }
+
+    public void setPushyid(String pushyid) {
+        this.pushyid = pushyid;
+    }
+
+    public Integer getStars() {
+        return stars;
+    }
+
+    public void setStars(Integer stars) {
+        this.stars = stars;
+    }
+
+    public Boolean getIsstar() {
+        return isstar;
+    }
+
+    public void setIsstar(Boolean isstar) {
+        this.isstar = isstar;
+    }
 
 }

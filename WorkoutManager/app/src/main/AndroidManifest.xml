@@ -30,7 +30,7 @@
 
         <!-- Pushy Notification Receiver -->
         <!-- Incoming push notifications will invoke the following BroadcastReceiver -->
-        <receiver android:name=".PushReceiver" android:exported="false">
+        <receiver android:name=".Notifications.PushReceiver" android:exported="false">
             <intent-filter>
                 <!-- Do not modify this -->
                 <action android:name="pushy.me" />

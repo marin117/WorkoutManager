@@ -44,7 +44,7 @@ public interface RestInterface {
     Call<List<Workout>> myWorkoutList(@Path("userId") String userId);
 
     @GET("/user/")
-    Call<UserDetails> getUserInfo(@Query("userId") String userId);
+    Call<UserDetails> getUserInfo(@Query("id") String id, @Query("userId") String userId);
 
     @PATCH("/routine/")
     @Headers("Content-Type: application/json")
@@ -53,5 +53,15 @@ public interface RestInterface {
     @DELETE("/routine/")
     Call<String> dislikeRoutine(@Query("userId") String userId, @Query("routineId") int routineId);
 
+    @GET("/persons/")
+    Call<List<User>> getPersons(@Query("filter") String filter);
+
+    @PUT("/user/")
+    @Headers("Content-Type: application/json")
+    Call<String> starUser(@Query("id") String userId, @Body User user);
+
+    @DELETE("/user/")
+    @Headers("Content-Type: application/json")
+    Call<String> unStarUser(@Query("id") String userId, @Query("star") String starId);
 
 }

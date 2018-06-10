@@ -63,11 +63,19 @@ end
 
 get "/user/" do |e|
   user_id = e.params.query["userId"]
+  id = e.params.query["id"]
   STDOUT.puts user_id
   fav_exercises = Array(String).new
   fav_types = Array(String).new
   response = ""
-  user_query = db.query_one "select row_to_json(t) from (select * from person where id = $1) t;", user_id, &.read(JSON::Any)
+  user_query = db.query_one "select row_to_json(t) from (select person.*, case when count is null then 0 else count end as stars, case when c.star = person.id then true else false end as isstar
+from person
+left join (select star, count(star) from user_stars group by star) x on person.id = star left join
+(select * from user_stars where id = $2) l on l.star = person.id left join
+(select * from user_stars where id = $2 and star = $1) c
+ on c.star = person.id
+group by person.id, count, c.star
+having person.id = $1) t;", user_id, id, &.read(JSON::Any)
   user = User.from_json(user_query.to_json)
   workout_query = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
 from (select workout.routine_id, r.name, username,owner, location, to_char(date, 'HH24:mm TZ DD.Month') as date, cnt.used,
@@ -97,6 +105,26 @@ having w.user_id = $1) res group by type_name order by count desc limit 3) t;", 
   response.to_json
 end
 
+get "/persons/" do |e|
+  filter = e.params.query.fetch("filter", nil)
+  users = ""
+  if filter == nil
+    users = db.query_one "select array_to_json(array_agg(row_to_json(t))) from (select person.*, case when count is null then 0 else count end as stars from person
+left join (select star, count(star) from user_stars group by star) x on person.id = star) t;
+;", &.read(JSON::Any)
+  else
+    filter = "%#{filter}%"
+    STDOUT.puts filter
+    users = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+    from (select id,username,email,picture, case when count is null then 0 else count end as stars from person
+left join (select star, count(star) from user_stars group by star) x on person.id = star where lower(username)
+like lower($1)) t ;", filter, &.read(JSON::Any)
+  end
+  STDOUT.puts users.to_json
+
+  users.to_json
+end
+
 get "/routine/" do |e|
   id = e.params.query["id"]
   user_id = e.params.query["user_id"]
@@ -119,7 +147,7 @@ end
 
 put "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
-  user_id = e.params.query["id"]
+  user_id = e.params.query["idv"]
   time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
   location = e.params.json["location"].as(String)
   username, pushyid = db.query_one "insert into workout (user_id, routine_id, date, location) values ($1, $2, $3, $4)
@@ -129,6 +157,7 @@ put "/routine/" do |e|
   data = {
     "to":   pushyid,
     "data": {
+      "type":         "reuse",
       "user":         username,
       "message":      "reused",
       "routine_name": routine.name,
@@ -169,6 +198,7 @@ patch "/routine/" do |e|
   data = {
     "to":   pushyid,
     "data": {
+      "type":         "like",
       "user":         username,
       "message":      "liked",
       "routine_name": routine.name,
@@ -195,13 +225,42 @@ post "/token/" do |e|
   name = google_resp["name"].to_s
   email = google_resp["email"].to_s
   picture = google_resp["picture"].to_s
-  user = User.new(sub, name, email, picture)
+  user = User.new(sub, name, email, picture, e.params.json["pushyToken"].to_s)
   begin
     db.exec("INSERT INTO person(id, username, email, picture, pushyid) VALUES ($1, $2, $3, $4, $5)", sub, name, email, picture, e.params.json["pushyToken"].to_s)
   rescue ex : Exception
     db.exec("UPDATE person set pushyid = $2 WHERE id = $1", sub, e.params.json["pushyToken"].to_s)
   end
   user.to_json
+end
+
+put "/user/" do |e|
+  user_id = e.params.query["id"].to_s
+  user_star_id = e.params.json["id"].to_s
+  pushy_id = e.params.json["pushyid"].to_s
+  username = e.params.json["username"].to_s
+
+  username = db.query_one "insert into user_stars values($1, $2) returning
+(select username from person where id = $1)", user_id, user_star_id, &.read(String)
+
+  data = {
+    "to":   pushy_id,
+    "data": {
+      "type":    "follow",
+      "user":    username,
+      "message": "followed",
+    },
+  }.to_json
+
+  response = HTTP::Client.post("https://api.pushy.me/push?api_key=f41e98360f8af1e55d4e44be7dc55d1941451f9be38da7bd7f62904faaad69d8",
+    headers: HTTP::Headers{"Content-type" => "application/json"}, body: data)
+end
+
+delete "/user/" do |e|
+  user_id = e.params.query["id"].to_s
+  user_star_id = e.params.query["star"].to_s
+
+  db.exec "delete from user_stars where id = $1 and star = id $2", user_id, user_star_id
 end
 
 Kemal.run

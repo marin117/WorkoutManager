@@ -37,3 +37,9 @@ create table likes(
     routine_id bigint references routine(id))
 );
 
+create table user_stars(
+    id text NOT NULL references person(id),
+    star text NOT NULL references person(id),
+
+);
+

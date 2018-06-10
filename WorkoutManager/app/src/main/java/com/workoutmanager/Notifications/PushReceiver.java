@@ -1,4 +1,4 @@
-package com.workoutmanager;
+package com.workoutmanager.Notifications;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.workoutmanager.Activity.MainActivity;
+import com.workoutmanager.R;
 
 public class PushReceiver extends BroadcastReceiver {
     @Override
@@ -19,15 +20,24 @@ public class PushReceiver extends BroadcastReceiver {
         String message = "";
         String username = "";
         String routine_name = "";
+        String type = "";
 
         Log.d("TAAAAAAG", "notifikacija");
 
         if (intent.getStringExtra("message") != null) {
-            message = intent.getStringExtra("message");
+            type = intent.getStringExtra("type");
             username = intent.getStringExtra("user");
-            routine_name = intent.getStringExtra("routine_name");
-            notificationText = username + " "+ message + " your workout " + routine_name;
 
+            if (type.equals("follow")){
+                notificationText = username + "put a star on you!";
+
+            }
+            else {
+                message = intent.getStringExtra("message");
+                username = intent.getStringExtra("user");
+                routine_name = intent.getStringExtra("routine_name");
+                notificationText = username + " " + message + " your workout " + routine_name;
+            }
         }
 
         // Prepare a notification with vibration, sound and lights
