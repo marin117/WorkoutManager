@@ -28,7 +28,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
 
     public class WorkoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
-        public TextView name, user, date, location, stars, reuse;
+        TextView name, user, date, location, stars, reuse;
         WorkoutHolder(View view) {
             super(view);
             name = view.findViewById(R.id.workout_name);

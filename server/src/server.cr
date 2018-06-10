@@ -119,10 +119,25 @@ end
 
 put "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
+  user_id = e.params.query["id"]
   time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
   location = e.params.json["location"].as(String)
+  username, pushyid = db.query_one "insert into workout (user_id, routine_id, date, location) values ($1, $2, $3, $4)
+  returning (select username from person where id = $1), (select pushyid from person where id = $5)",
+    user_id, routine.id, time, location, routine.user_id, as: {String, String}
 
-  db.exec "insert into workout (user_id, routine_id, date, location) values ($1, $2, $3, $4)", routine.user_id, routine.id, time, location
+  data = {
+    "to":   pushyid,
+    "data": {
+      "user":         username,
+      "message":      "reused",
+      "routine_name": routine.name,
+      "routine_id":   routine.id,
+    },
+  }.to_json
+
+  response = HTTP::Client.post("https://api.pushy.me/push?api_key=f41e98360f8af1e55d4e44be7dc55d1941451f9be38da7bd7f62904faaad69d8",
+    headers: HTTP::Headers{"Content-type" => "application/json"}, body: data)
 
   "response"
 end
@@ -148,7 +163,21 @@ end
 
 patch "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
-  db.exec "insert into likes (user_id, routine_id) values ($1, $2)", routine.user_id, routine.id
+  user_id = e.params.query["id"]
+  username, pushyid = db.query_one "insert into likes (user_id, routine_id) values ($1, $2) returning
+(select username from person where id =$1), (select pushyid from person where id =$3)", user_id, routine.id, routine.user_id, as: {String, String}
+  data = {
+    "to":   pushyid,
+    "data": {
+      "user":         username,
+      "message":      "liked",
+      "routine_name": routine.name,
+      "routine_id":   routine.id,
+    },
+  }.to_json
+  STDOUT.puts data
+  response = HTTP::Client.post("https://api.pushy.me/push?api_key=f41e98360f8af1e55d4e44be7dc55d1941451f9be38da7bd7f62904faaad69d8",
+    headers: HTTP::Headers{"Content-type" => "application/json"}, body: data)
 end
 
 delete "/routine/" do |e|
@@ -158,7 +187,7 @@ delete "/routine/" do |e|
 end
 
 post "/token/" do |e|
-  url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + e.params.json["tokenId"].to_s
+  url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + e.params.json["googleToken"].to_s
   response = HTTP::Client.get url
   STDOUT.puts response.body
   google_resp = JSON.parse(response.body)
@@ -168,9 +197,9 @@ post "/token/" do |e|
   picture = google_resp["picture"].to_s
   user = User.new(sub, name, email, picture)
   begin
-    db.exec("insert into person(id, username, email, picture) values ($1, $2, $3, $4)", sub, name, email, picture)
-  rescue e : Exception
-    STDOUT.puts e
+    db.exec("INSERT INTO person(id, username, email, picture, pushyid) VALUES ($1, $2, $3, $4, $5)", sub, name, email, picture, e.params.json["pushyToken"].to_s)
+  rescue ex : Exception
+    db.exec("UPDATE person set pushyid = $2 WHERE id = $1", sub, e.params.json["pushyToken"].to_s)
   end
   user.to_json
 end

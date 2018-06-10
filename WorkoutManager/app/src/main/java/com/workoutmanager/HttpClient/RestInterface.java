@@ -1,8 +1,7 @@
 package com.workoutmanager.HttpClient;
 
 import com.workoutmanager.Models.AddRoutineModel;
-import com.workoutmanager.Models.GoogleToken;
-import com.workoutmanager.Models.IdModel;
+import com.workoutmanager.Models.Token;
 import com.workoutmanager.Models.Routine;
 import com.workoutmanager.Models.User;
 import com.workoutmanager.Models.UserDetails;
@@ -36,10 +35,10 @@ public interface RestInterface {
 
     @POST("/token/")
     @Headers("Content-Type: application/json")
-    Call<User> sendToken(@Body GoogleToken tokenId);
+    Call<User> sendToken(@Body Token tokenId);
 
     @PUT("/routine/")
-    Call<String> addWorkout(@Body AddRoutineModel routine);
+    Call<String> addWorkout(@Query("id") String userId, @Body AddRoutineModel routine);
 
     @GET("/{userId}/workout/")
     Call<List<Workout>> myWorkoutList(@Path("userId") String userId);
@@ -49,7 +48,7 @@ public interface RestInterface {
 
     @PATCH("/routine/")
     @Headers("Content-Type: application/json")
-    Call<String> likeRoutine(@Body AddRoutineModel routine);
+    Call<String> likeRoutine(@Query("id") String user_id, @Body AddRoutineModel routine);
 
     @DELETE("/routine/")
     Call<String> dislikeRoutine(@Query("userId") String userId, @Query("routineId") int routineId);

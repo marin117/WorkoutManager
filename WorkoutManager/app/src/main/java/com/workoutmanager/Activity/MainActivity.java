@@ -1,6 +1,10 @@
 package com.workoutmanager.Activity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -23,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
+import com.workoutmanager.Fragments.RoutineDetailFragment;
 import com.workoutmanager.Fragments.UserFragment;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
@@ -31,6 +36,7 @@ import com.workoutmanager.Utils.SharedPreferencesUtil;
 import com.workoutmanager.ViewModel.MainViewModel;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.pushy.sdk.Pushy;
 
 import static com.workoutmanager.Utils.PictureUtils.loadPicture;
 
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
     private NavigationView navigationView;
     private SharedPreferencesUtil sharedPreferencesUtil;
     private MainViewModel mainViewModel;
+    String CHANNEL_ID = "1987";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +64,31 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         sharedPreferencesUtil = new SharedPreferencesUtil(this);
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        changeFragments(new LoginFragment(), true);
-
+        createNotificationChannel();
+        Pushy.listen(this);
 
         selectDrawerContent(navigationView);
 
+        changeFragments(new LoginFragment(), true);
+
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

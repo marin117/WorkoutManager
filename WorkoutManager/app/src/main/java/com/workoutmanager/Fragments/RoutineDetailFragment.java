@@ -160,8 +160,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
 
     private void sendRoutine(){
         AddRoutineModel addRoutineModel = new AddRoutineModel(currentRoutine);
-        addRoutineModel.getRoutine().setUserId(userId);
-        Call<String> call = retrofit.createClient().addWorkout(addRoutineModel);
+        Call<String> call = retrofit.createClient().addWorkout(userId, addRoutineModel);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull  Call<String> call, @NonNull Response<String> response) {
@@ -179,8 +178,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
 
     private void likeRoutine(){
         AddRoutineModel addRoutineModel = new AddRoutineModel(currentRoutine);
-        addRoutineModel.getRoutine().setUserId(userId);
-        Call<String> like = retrofit.createClient().likeRoutine(addRoutineModel);
+        Call<String> like = retrofit.createClient().likeRoutine(userId, addRoutineModel);
         like.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull  Call<String> call,@NonNull Response<String> response){

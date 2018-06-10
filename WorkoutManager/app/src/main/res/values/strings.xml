@@ -20,4 +20,6 @@
     <string name="user_point">User point</string>
     <string name="username">username</string>
     <string name="picture">picture</string>
+    <string name="channel_name">channel_name</string>
+    <string name="channel_description">notification channel</string>
 </resources>

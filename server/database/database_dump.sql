@@ -1,7 +1,8 @@
 CREATE TABLE person (
     id text NOT NULL PRIMARY KEY unique,
     username text NOT NULL,
-    email text NOT NULL
+    email text NOT NULL,
+    pushyid text NOT NULL
 );
 
 CREATE TABLE routine (
