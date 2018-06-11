@@ -277,7 +277,7 @@ join (select routine.*, username as owner from routine join person on person.id 
 join person on person.id = workout.user_id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
 as cnt on cnt.routine_id = r.id
 left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
-join (select * from likes where user_id = $1) as islike on islike.user_id = workout.user_id
+join (select * from likes where user_id = $1) as islike on islike.routine_id = workout.routine_id
 where person.id = $1 order by workout.date desc) t;", user_id, &.read(JSON::Any)
 
   response.to_json

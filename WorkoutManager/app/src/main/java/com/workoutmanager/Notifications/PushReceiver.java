@@ -29,7 +29,7 @@ public class PushReceiver extends BroadcastReceiver {
             username = intent.getStringExtra("user");
 
             if (type.equals("follow")){
-                notificationText = username + "put a star on you!";
+                notificationText = username + " put a star on you!";
 
             }
             else {
