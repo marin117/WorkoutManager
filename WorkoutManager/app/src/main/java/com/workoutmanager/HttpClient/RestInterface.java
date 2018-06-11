@@ -61,7 +61,13 @@ public interface RestInterface {
     Call<String> starUser(@Query("id") String userId, @Body User user);
 
     @DELETE("/user/")
-    @Headers("Content-Type: application/json")
     Call<String> unStarUser(@Query("id") String userId, @Query("star") String starId);
+
+    @GET("/like/")
+    Call<List<Workout>> getLiked(@Query("id") String userId);
+
+    @GET("/stars/")
+    Call<List<User>> getStars(@Query("id") String userId);
+
 
 }

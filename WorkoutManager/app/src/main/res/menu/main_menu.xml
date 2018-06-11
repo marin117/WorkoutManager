@@ -6,13 +6,23 @@
             android:id="@+id/home"
             android:title="Home" />
         <item
-            android:id="@+id/personal_workouts"
-            android:title="My workouts" />
+            android:id="@+id/find_users"
+            android:title="Discover users" />
+
+        <item
+            android:id="@+id/liked_workouts"
+            android:title="Liked workouts" />
+
+        <item
+            android:id="@+id/star_users"
+            android:title="Your stars" />
 
         <item
             android:id ="@+id/logout"
             android:title="Log Out"
             />
+
+
 
     </group>
 </menu>

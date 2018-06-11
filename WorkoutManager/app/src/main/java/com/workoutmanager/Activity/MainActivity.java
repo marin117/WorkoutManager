@@ -26,9 +26,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 import com.workoutmanager.Fragments.FindUserFragment;
+import com.workoutmanager.Fragments.LikedWorkoutsFragment;
 import com.workoutmanager.Fragments.LoginFragment;
 import com.workoutmanager.Fragments.MainFragment;
 import com.workoutmanager.Fragments.RoutineDetailFragment;
+import com.workoutmanager.Fragments.StarFragment;
 import com.workoutmanager.Fragments.UserFragment;
 import com.workoutmanager.R;
 import com.workoutmanager.Utils.GoogleAccount;
@@ -120,9 +122,14 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
             case R.id.home:
                 changeFragments(new MainFragment(), false);
                 break;
-            case R.id.personal_workouts:
-                //mainViewModel.setUserId(sharedPreferencesUtil.readData(getString(R.string.id)));
+            case R.id.find_users:
                 changeFragments(new FindUserFragment(), false);
+                break;
+            case R.id.liked_workouts:
+                changeFragments(new LikedWorkoutsFragment(), false);
+                break;
+            case R.id.star_users:
+                changeFragments(new StarFragment(), false);
                 break;
             case R.id.logout:
                 GoogleAccount account = new GoogleAccount(getApplicationContext());

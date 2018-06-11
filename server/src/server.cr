@@ -217,6 +217,7 @@ delete "/routine/" do |e|
 end
 
 post "/token/" do |e|
+  STDOUT.puts e.params.json["pushyToken"].to_s
   url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + e.params.json["googleToken"].to_s
   response = HTTP::Client.get url
   STDOUT.puts response.body
@@ -229,6 +230,7 @@ post "/token/" do |e|
   begin
     db.exec("INSERT INTO person(id, username, email, picture, pushyid) VALUES ($1, $2, $3, $4, $5)", sub, name, email, picture, e.params.json["pushyToken"].to_s)
   rescue ex : Exception
+    STDOUT.puts ex.message
     db.exec("UPDATE person set pushyid = $2 WHERE id = $1", sub, e.params.json["pushyToken"].to_s)
   end
   user.to_json
@@ -259,8 +261,33 @@ end
 delete "/user/" do |e|
   user_id = e.params.query["id"].to_s
   user_star_id = e.params.query["star"].to_s
+  STDOUT.puts user_id
+  STDOUT.puts user_star_id
 
-  db.exec "delete from user_stars where id = $1 and star = id $2", user_id, user_star_id
+  db.exec "delete from user_stars where id = $1 and star = $2", user_id, user_star_id
 end
 
+get "/like/" do |e|
+  user_id = e.params.query["id"].to_s
+  response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select workout.routine_id, r.name, username,owner, location, to_char(date, 'HH24:mm TZ DD.Month') as date, cnt.used,
+case when likes.count is null then 0 else likes.count end as appraisal,
+case when r.user_id = workout.user_id then (select true) else (select false) end as isOwner from workout
+join (select routine.*, username as owner from routine join person on person.id = user_id) as r on r.id = routine_id
+join person on person.id = workout.user_id join (select routine_id, count(routine_id) - 1 as used from workout group by routine_id)
+as cnt on cnt.routine_id = r.id
+left join (select routine_id, count(routine_id) from likes group by routine_id) likes on r.id = likes.routine_id
+join (select * from likes where user_id = $1) as islike on islike.user_id = workout.user_id
+where person.id = $1 order by workout.date desc) t;", user_id, &.read(JSON::Any)
+
+  response.to_json
+end
+
+get "/stars/" do |e|
+  user_id = e.params.query["id"].to_s
+  response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select person.*, case when count is null then 0 else count end as stars from person
+join (select star, count(star) from user_stars where id = $1 group by star) x on person.id = star) t", user_id, &.read(JSON::Any)
+  response.to_json
+end
 Kemal.run
