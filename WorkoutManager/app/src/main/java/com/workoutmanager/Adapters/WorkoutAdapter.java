@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.workoutmanager.Fragments.RoutineDetailFragment;
 import com.workoutmanager.R;
@@ -44,9 +43,6 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         public void onClick(View v) {
             Log.d("ID", String.valueOf(workoutList.get(getAdapterPosition()).getRoutineId()));
             Context context = v.getContext();
-            Toast.makeText(context,
-                    "ID: "+ String.valueOf(workoutList.get(getAdapterPosition()).getName()),
-                    Toast.LENGTH_LONG).show();
 
             Workout workout = workoutList.get(getAdapterPosition());
             mainViewModel.setWorkout(workout);
