@@ -293,7 +293,8 @@ end
 
 get "/:userId/stars/" do |e|
   user_id = e.params.url["userId"]
-  stars = db.query_one "select array_to_json(array_agg(row_to_json(t))) from (select person.*, case when count is null then 0 else count end as stars from person join (select * from user_stars where star = $1) x on x.id = person.id
+  stars = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
+from (select person.*, case when count is null then 0 else count end as stars from person join (select * from user_stars where star = $1) x on x.id = person.id
 left join (select star, count(star) from user_stars group by star) c on person.id = c.star) t;", user_id, &.read(JSON::Any)
   stars.to_json
 end
