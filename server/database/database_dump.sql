@@ -2,7 +2,8 @@ CREATE TABLE person (
     id text NOT NULL PRIMARY KEY unique,
     username text NOT NULL,
     email text NOT NULL,
-    pushyid text NOT NULL
+    pushyid text NOT NULL,
+    picture text NOT NULL
 );
 
 CREATE TABLE routine (
@@ -12,6 +13,21 @@ CREATE TABLE routine (
     appraisal integer DEFAULT 0 NOT NULL,
     comment text
 );
+
+CREATE TABLE exercise(
+    name text NOT NULL PRIMARY KEY    
+);
+
+
+CREATE TABLE type(
+    name text NOT NULL PRIMARY KEY    
+);
+
+CREATE TABLE exercise_type(
+    exercise_name text references exercise(name),
+    type_name text references type(name)
+);
+
 
 CREATE TABLE routine_exercise (
     routine_id bigint NOT NULL references routine(id),
@@ -34,7 +50,7 @@ CREATE TABLE workout (
 
 create table likes(
     user_id text references person(id), 
-    routine_id bigint references routine(id))
+    routine_id bigint references routine(id)
 );
 
 create table user_stars(

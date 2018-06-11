@@ -147,7 +147,7 @@ end
 
 put "/routine/" do |e|
   routine = Routine.from_json(e.params.json["routine"].to_json)
-  user_id = e.params.query["idv"]
+  user_id = e.params.query["id"]
   time = Time.parse(e.params.json["date"].as(String), "%Y-%m-%d %H:%M:%S%z")
   location = e.params.json["location"].as(String)
   username, pushyid = db.query_one "insert into workout (user_id, routine_id, date, location) values ($1, $2, $3, $4)
