@@ -63,7 +63,7 @@ public interface RestInterface {
     @DELETE("/user/")
     Call<String> unStarUser(@Query("id") String userId, @Query("star") String starId);
 
-    @GET("/like/")
+    @GET("/likes/")
     Call<List<Workout>> getLiked(@Query("id") String userId);
 
     @GET("/stars/")

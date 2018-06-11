@@ -267,7 +267,7 @@ delete "/user/" do |e|
   db.exec "delete from user_stars where id = $1 and star = $2", user_id, user_star_id
 end
 
-get "/like/" do |e|
+get "/likes/" do |e|
   user_id = e.params.query["id"].to_s
   response = db.query_one "select case when array_to_json(array_agg(row_to_json(t))) is null then row_to_json(row(0)) else array_to_json(array_agg(row_to_json(t))) end
 from (select workout.routine_id, r.name, username,owner, location, to_char(date, 'HH24:mm TZ DD.Month') as date, cnt.used,
