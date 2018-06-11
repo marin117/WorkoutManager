@@ -26,11 +26,12 @@ public class FindUserAdapter extends RecyclerView.Adapter<FindUserAdapter.UserHo
 
     public class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView profilePicture;
-        TextView username;
+        TextView username, stars;
         UserHolder(View view){
             super(view);
             profilePicture = view.findViewById(R.id.find_user_image);
             username = view.findViewById(R.id.find_user_username);
+            stars = view.findViewById(R.id.find_user_star);
             view.setOnClickListener(this);
         }
 
@@ -62,6 +63,7 @@ public class FindUserAdapter extends RecyclerView.Adapter<FindUserAdapter.UserHo
         User user = users.get(position);
         loadPicture(user.getPicture(), 200, 200, holder.profilePicture);
         holder.username.setText(user.getUsername());
+        holder.stars.setText(user.getStars().toString());
     }
 
     @Override

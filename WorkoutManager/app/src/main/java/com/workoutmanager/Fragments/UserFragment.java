@@ -143,7 +143,6 @@ public class UserFragment extends Fragment implements DataHandler {
 
                             if (response.body().getUser().getId().equals(id)) {
                                 starButton.setVisibility(View.INVISIBLE);
-                                stars.setVisibility(View.INVISIBLE);
                             }
                             else {
                                 if (response.body().getUser().getIsstar())

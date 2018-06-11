@@ -48,8 +48,6 @@
                         android:layout_marginStart="5dp"
                         app:icon_size="30dp"
                         app:icon_type="star"
-
-
                         />
 
                     <TextView
@@ -61,7 +59,9 @@
                         android:layout_toEndOf="@+id/user_star"
                         android:textColor="#000000"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true"
+                        android:drawableStart="@drawable/star"
+                        android:drawablePadding="@dimen/drawable_padding"/>
                 </RelativeLayout>
             </RelativeLayout>
 

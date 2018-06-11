@@ -10,8 +10,8 @@ public class RetrofitClient {
 
     private static Retrofit  retrofit = null;
     //private String STRING_BASE_URL = "http://10.0.2.2:3000/";
-    private String STRING_BASE_URL = "http://192.168.0.12:3000/";
-    //private String STRING_BASE_URL = "http://35.234.81.24:3000/";
+    //private String STRING_BASE_URL = "http://192.168.0.12:3000/";
+    private String STRING_BASE_URL = "http://35.234.81.24:3000/";
 
     public RetrofitClient(){
         retrofit = null;
