@@ -1,7 +1,6 @@
 package com.workoutmanager.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -50,7 +49,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
                     Toast.LENGTH_LONG).show();
 
             Workout workout = workoutList.get(getAdapterPosition());
-            mainViewModel.setRoutineID(workout);
+            mainViewModel.setWorkout(workout);
 
 
             FragmentTransaction fragmentTransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();

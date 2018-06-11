@@ -69,5 +69,15 @@ public interface RestInterface {
     @GET("/stars/")
     Call<List<User>> getStars(@Query("id") String userId);
 
+    @GET("/{userId}/stars/")
+    Call<List<User>> starUserList(@Path("userId") String userId);
+
+    @GET("/likes/{routineId}/")
+    Call<List<User>> likeRoutineUserList(@Path("routineId") int routineId);
+
+    @GET("/reuse/{routineId}/")
+    Call<List<User>> reuseRoutineUserList(@Path("routineId") int routineId);
+
+
 
 }

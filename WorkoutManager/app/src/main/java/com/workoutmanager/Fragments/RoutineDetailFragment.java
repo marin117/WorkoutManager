@@ -97,6 +97,28 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
             }
         });
 
+        likeNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainViewModel.setRoutineId(currentRoutine);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().
+                        addToBackStack(null).
+                        replace(R.id.main_fragment,new RoutineLikeFragment()).commit();
+            }
+        });
+
+        reuseNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainViewModel.setRoutineId(currentRoutine);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().
+                        addToBackStack(null).
+                        replace(R.id.main_fragment,new RoutineReuseFragment()).commit();
+            }
+        });
+
         return view;
     }
 
@@ -119,7 +141,7 @@ public class RoutineDetailFragment extends Fragment implements DataHandler{
 
     @Override
     public void getData(){
-        mainViewModel.getRoutineID().observe(this, new Observer<Workout>() {
+        mainViewModel.getWorkout().observe(this, new Observer<Workout>() {
             @Override
             public void onChanged(@Nullable Workout workout) {
                 final String owner = workout.getOwner();
