@@ -173,7 +173,9 @@ public class MainActivity extends AppCompatActivity implements MenuInterface {
         View headerLayout = navigationView.getHeaderView(0);
         CircleImageView profilePicture = headerLayout.findViewById(R.id.picture_nav);
         String picture = sharedPreferencesUtil.readData(getString(R.string.picture));
-        loadPicture(picture, 300,300, profilePicture);
+        Log.d("TAAAAAAG", picture);
+        if (picture != null || !picture.isEmpty())
+            loadPicture(picture, 300,300, profilePicture);
         TextView username = headerLayout.findViewById(R.id.username_header);
         username.setText(sharedPreferencesUtil.readData(getString(R.string.username)));
 
