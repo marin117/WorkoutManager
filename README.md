@@ -8,7 +8,7 @@ Application for logging workout routines and sharing it with others.
 - Postgres database
 
 ## Installation and running
-Install Postgres database and import database models from **server/database/dump.sql ** and add inital data from **exercise_insert.sql**.
+Install Postgres database and import database models from **server/database/dump.sql** and add inital data from **exercise_insert.sql**.
 
 - Follow the [instructions](https://crystal-lang.org/docs/installation/) to install Crystal lang
 - Navigate to directory WorkoutManager/server and run command to install dependencies for Crystal:
